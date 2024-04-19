@@ -1,8 +1,8 @@
 declare global {
-    namespace NodeJS {
-        interface Global {
-            chrome: any
-        }
+  namespace NodeJS {
+    interface Global {
+      chrome: any;
     }
+  }
 }
 export default global;

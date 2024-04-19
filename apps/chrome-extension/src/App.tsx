@@ -1,26 +1,30 @@
-import type { Component } from 'solid-js';
-
-
-const Button = () => {
-
-  const handler = (data, event) => {
-    console.log('clicked', data)
-  }
-
-  return <button onClick={[handler, 1]}>Click Me</button>
-}
+import { Locale } from '@repo/subs';
+import { createSignal, type Component } from 'solid-js';
+import { PlaybackContextProvider, usePlaybackContext } from './PlaybackContext';
+import { SubsContextProvider } from './SubsContext';
+import { produce } from 'solid-js/store';
+import { RuntimeContextProvider } from './RuntimeContext';
+import { PlaybackReceivedContextProvider } from './PlaybackReceivedContext';
+import { SubsPanel } from './SubsPanel';
+import { LanguageHeader } from './LanguageHeader';
 
 
 const App: Component = () => {
   return (
-    <div>
-      <Button />
-      <p class="text-4xl text-green-700 text-center py-20">Hello tailwind!</p>
-    </div>
+    <RuntimeContextProvider>
+      <PlaybackReceivedContextProvider>
+        <SubsContextProvider>
+          <div class="bg-base-100 p-5">
+            <LanguageHeader fromLocale={Locale.En} toLocale={Locale.ZhTw} />
+            <SubsPanel />
+          </div>
+        </SubsContextProvider>
+      </PlaybackReceivedContextProvider>
+
+    </RuntimeContextProvider>
 
   );
 };
 
-
-
 export default App;
+

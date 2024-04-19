@@ -4,8 +4,11 @@
   "description": "",
   "scripts": {
     "start": "vite",
-    "dev": "vite",
-    "build": "vite build && cp manifest.json dist/",
+    "test": "vitest",
+    "dev": "vite --config vite.ext.config.ts",
+    "build:ext": "vite --config vite.ext.config.ts build",
+    "build:cs": "vite --config vite.cs.config.ts  build",
+    "build": "pnpm run build:ext && pnpm run build:cs && cp -R dist-cs/* dist/ && cp -R dist-ext/* dist/ && cp manifest.json dist/",
     "serve": "vite preview"
   },
   "license": "MIT",
@@ -19,6 +22,13 @@
     "vite-plugin-solid": "^2.8.2"
   },
   "dependencies": {
-    "solid-js": "^1.8.11"
+    "@repo/subs": "workspace:*",
+    "daisyui": "4.10.2",
+    "lodash": "^4.17.21",
+    "jsdom": "^24.0.0",
+    "rxjs": "^7.8.1",
+    "solid-js": "^1.8.11",
+    "videojs-vtt.js": "^0.15.5",
+    "xstate": "^5.11.0"
   }
 }

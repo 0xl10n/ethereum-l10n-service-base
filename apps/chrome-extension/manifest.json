@@ -1,17 +1,30 @@
 {
-    "name": "0xl10n",
-    "description": "Translation Extension by Ethereum Localization Service",
-    "version": "1.0",
-    "manifest_version": 3,
-    "action": {
-      "default_popup": "index.html"
-    },
-    "content_scripts": [
-      {
-        "matches": ["https://*.youtube.com/*"],
-        "js": ["contentscript.mjs"],
-        "runAt": "document_end"
-      }
-    ]
+  "name": "0xl10n",
+  "description": "Translation Extension by Ethereum Localization Service",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Click to open panel"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.youtube.com/*"],
+      "js": ["contentscript.mjs"],
+      "css": ["style.css"],
+      "runAt": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": ["<all_urls>"],
+      "resources": [
+        "https://cdn.jsdelivr.net/npm/solid-js@1.8.16/web/dist/web.js"
+      ]
+    }
+  ],
+  "permissions": ["sidePanel"],
+  "side_panel": {
+    "default_path": "sidepanel.html"
   }
-  
+}

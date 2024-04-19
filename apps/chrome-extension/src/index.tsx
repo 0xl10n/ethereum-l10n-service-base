@@ -14,21 +14,17 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 
 async function getCurrentTab() {
   const queryOptions = { active: true, currentWindow: true };
-  console.log('chrome', chrome)
+  console.log('chrome', chrome);
   const [tab] = await chrome.tabs.query(queryOptions);
   return tab;
 }
 
-const create = async () => {
-  // const tab = await getCurrentTab();
-  // console.log('tab', tab)
-  // chrome.scripting.executeScript({
-  //   target: { tabId: tab.id },
-  //   files: ['content-script.js']
-  // });
-};
-
 console.log('index.tsx');
 
+if (chrome.sidePanel) {
+  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+
+
+}
 
 render(() => <App />, root!);

@@ -1,3 +1,27 @@
+This repository contains packages of
+
+### Chrome extension
+
+- end-user can make use of rendered subtitles at translated videos on youtube, streamETH
+- end-user & attestors can attest translations
+
+### Subs
+
+-
+
+### contracts (Customized Allo strategy)
+
+- This contract implements Allov2 strategy
+
+### Grant Portal
+
+This is a fork of [gitcoinco/grants-stack](https://github.com/gitcoinco/grants-stack)
+
+- Create & Manage Rounds to fundraise for l10n effort
+- End-user Explore available Rounds to donate
+
+### Code base
+
 # Turborepo starter
 
 This is an official starter Turborepo.
@@ -10,6 +34,13 @@ Run the following command:
 npx create-turbo@latest
 ```
 
+---
+
+## Testing
+
+- sample command, testing pipeline test file only
+ env-cmd pnpm run test --filter subs -- pipeline
+ 
 ## What's inside?
 
 This Turborepo includes the following packages/apps:

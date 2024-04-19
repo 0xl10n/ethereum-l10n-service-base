@@ -10,4 +10,5 @@ node_modules/
 .env
 
 apps/contracts/lib/forge-std/*
-apps/chrome-extension/dist/*
+apps/chrome-extension/dist*/*
+
