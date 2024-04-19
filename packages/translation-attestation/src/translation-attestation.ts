@@ -9,6 +9,11 @@ import {
 
 import {ethers} from "ethers";
 
+(BigInt.prototype as any).toJSON = function () {
+  // TODO: if the number is too large, it should not be casted as integer
+  return parseInt(this);
+};
+
 export interface Attestation {
   signer: string;
   sig: SignedOffchainAttestation;
@@ -91,17 +96,10 @@ export default class TranslationAttestation {
     console.log("New attestation UID:", newAttestationUID);
   }
 
-  async attestTranslationOffChain(score: number, videoId: string, lineId: string, translatedLineId: string) : Promise<any> {
-    console.log('attesting translation offchain');
-    console.log('videoId:', videoId);
-    console.log('lineId:', lineId);
-    console.log('translatedLineId:', translatedLineId);
-    console.log('score:', score);
-
+  async attestTranslationOffChain(score: number, videoId: string, lineId: string, translatedLineId: string, responseAsText: boolean = false) : Promise<any> {
     const EASContractAddress = this.easContractAddress;
     const eas = new EAS(EASContractAddress);
     eas.connect(this.signer);
-    console.log(this.signer.address);
     const offchain = await eas.getOffchain();
     const schemaEncoder = new SchemaEncoder(this.schema);
 
@@ -130,11 +128,14 @@ export default class TranslationAttestation {
         'signature': offchainAttestation.signature,
         'uid': offchainAttestation.uid,
         'message': offchainAttestation.message,
+        'version': offchainAttestation.version,
       },
       'signer': this.signer.address,
     };
 
-    console.log('attestation:', attestation);
+    if (responseAsText) {
+      return JSON.stringify(attestation);
+    }
 
     return attestation;
   }
@@ -148,14 +149,17 @@ export default class TranslationAttestation {
 
     const EASContractAddress = this.easContractAddress;
     const eas = new EAS(EASContractAddress);
-    eas.connect(this.signer);
+    const offchain = new Offchain(EAS_CONFIG, attestation.sig.version, eas);
+    let isValidAttestation = false;
 
-    const offchain = new Offchain(EAS_CONFIG, OffchainAttestationVersion.Version2, eas);
-
-    const isValidAttestation = offchain.verifyOffchainAttestationSignature(
-      attestation.signer,
-      attestation.sig
-    );
+    try {
+       isValidAttestation = offchain.verifyOffchainAttestationSignature(
+          attestation.signer,
+          attestation.sig
+      );
+    } catch(e) {
+        console.error(e);
+    }
 
     console.log('isValidAttestation:', isValidAttestation);
 

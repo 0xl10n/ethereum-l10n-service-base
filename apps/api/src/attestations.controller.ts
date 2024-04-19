@@ -5,10 +5,16 @@ import { TranslationAttestation } from 'translation-attestation';
 import 'dotenv/config'
 import { SignedOffchainAttestation } from "@ethereum-attestation-service/eas-sdk";
 
+(BigInt.prototype as any).toJSON = function () {
+  // TODO: if the number is too large, it should not be casted as integer
+  return parseInt(this);
+};
+
 @Controller('attestations')
 export class AttestationsController {
+
   @Get()
-  findAll(): string {
+  async findAll(@Res() res: Response): Promise<Response> {
     let translationAttestation = new TranslationAttestation(
         process.env.EthNetwork,
         process.env.AlchemyAPIKey,
@@ -19,14 +25,23 @@ export class AttestationsController {
         process.env.RecipientAddress
     );
     translationAttestation.ping();
-    return 'This action returns all attestations';
+    let attestation = await translationAttestation.attestTranslationOffChain(1, 'videoId', 'lineId', 'translatedLineId');
+    console.log(attestation);
+
+    let verified = await translationAttestation.verifyTranslationAttestation({
+      signer: attestation.signer,
+      sig: attestation.sig as SignedOffchainAttestation
+    });
+    console.log(verified)
+
+    return res.status(HttpStatus.OK).json(attestation);
   }
 
   @Post()
   async create(
       @Body() createAttestationDto: CreateAttestationDto,
       @Res() res: Response,
-  ): Promise<string> {
+  ): Promise<Response> {
     // validate the input
     if (
         createAttestationDto.sig === undefined ||
@@ -48,15 +63,42 @@ export class AttestationsController {
         process.env.RecipientAddress
     );
 
-    let verified = await translationAttestation.verifyTranslationAttestation({
-        signer: createAttestationDto.signer,
-        sig: createAttestationDto.sig as SignedOffchainAttestation
+    const verified = await translationAttestation.verifyTranslationAttestation({
+      signer: createAttestationDto.signer,
+      sig: {
+        domain: {
+          chainId: BigInt(createAttestationDto.sig.domain.chainId),
+          name: createAttestationDto.sig.domain.name,
+          verifyingContract: createAttestationDto.sig.domain.verifyingContract,
+          version: createAttestationDto.sig.domain.version
+        },
+        primaryType: createAttestationDto.sig.primaryType,
+        types: createAttestationDto.sig.types,
+        signature: createAttestationDto.sig.signature,
+        uid: createAttestationDto.sig.uid,
+        message: {
+          recipient: createAttestationDto.sig.message.recipient,
+          schema: createAttestationDto.sig.message.schema,
+          time: BigInt(createAttestationDto.sig.message.time),
+          expirationTime: BigInt(createAttestationDto.sig.message.expirationTime),
+          refUID: createAttestationDto.sig.message.refUID,
+          data: createAttestationDto.sig.message.data,
+          revocable: createAttestationDto.sig.message.revocable,
+          salt: createAttestationDto.sig.message.salt,
+          version: createAttestationDto.sig.message.version,
+        },
+        version: createAttestationDto.sig.version
+      }
     });
-    console.log(verified);
 
-    // if valid, save the attestations to the database
+    if (!verified) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Attestation is not valid' });
+    }
 
-    // if not valid, return an error message
-    return 'This action adds a new attestation';
+    // if the attestation is valid, store it in IPFS
+    // TODO: store the attestation in IPFS
+
+    // return the response
+    return res.status(HttpStatus.OK).json({ message: 'Attestation is valid' });
   }
 }
