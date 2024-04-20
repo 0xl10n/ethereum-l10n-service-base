@@ -26,5 +26,6 @@ describe('@jsdom webvtt', () => {
     expect(cuesAll.length).toEqual(2);
 
     expect(!!cuesAll[0].text.match('Never drink')).toEqual(true);
+    expect(cuesAll[0].id).toEqual('0');
   });
 });
