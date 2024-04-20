@@ -4,7 +4,7 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "test": "vitest"
+    "test": "forge test"
   },
   "exports": {
     ".": "./src/index.ts"

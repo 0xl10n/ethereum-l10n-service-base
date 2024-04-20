@@ -1,0 +1,25 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["node_modules", "lib"]
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+
+remappings = [
+    "@ds-test/=lib/ds-test/src/",
+    "@solmate/=lib/solmate/src/",
+    "@forge-std/=lib/forge-std/src/",
+    "@oz/=lib/oz/contracts/",
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+    "@zondax/filecoin-solidity/=node_modules/@zondax/filecoin-solidity/",
+    "@ensdomains/buffer/contracts/=node_modules/@ensdomains/buffer/contracts/",
+    "solidity-cborutils/=node_modules/solidity-cborutils/",
+    "openzeppelin-contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/",
+    "eas-contracts/=lib/eas-contracts/contracts/"
+]
+
+
+rpc_endpoints = { calibration = 'https://calibration.filfox.info/rpc/v1' }
+chain_id = 314159
+fuzz_runs = 256
+optimizer = true
