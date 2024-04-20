@@ -7,6 +7,7 @@ const build = {
   lib: {
     entry: {
       index: resolve(__dirname, 'index.html'),
+      sidepanel: resolve(__dirname, 'sidepanel.html'),
     },
     formats: ['es'],
   },
