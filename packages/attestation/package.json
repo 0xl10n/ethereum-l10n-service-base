@@ -1,10 +1,11 @@
 {
-  "name": "translation-attestation",
+  "name": "@repo/attestation",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "dev": "rm -rf dist && tsc --watch"
+    "dev": "rm -rf dist && tsc --watch",
+    "vitest": "test"
   },
   "exports": {
     ".": {
@@ -14,12 +15,14 @@
   },
   "dependencies": {
     "@ethereum-attestation-service/eas-sdk": "^1.6.0",
+    "viem": "^2.9.23",
     "ethers": "^6.11.1"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
     "ts-node": "^10.9.2",
     "tsx": "^4.7.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^1.5.0"
   }
 }

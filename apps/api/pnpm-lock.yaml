@@ -20,9 +20,9 @@ dependencies:
   rxjs:
     specifier: ^7.8.1
     version: 7.8.1
-  translation-attestation:
-    specifier: link:../packages/translation-attestation
-    version: link:../packages/translation-attestation
+  attestation:
+    specifier: link:../packages/attestation
+    version: link:../packages/attestation
 
 devDependencies:
   '@nestjs/cli':

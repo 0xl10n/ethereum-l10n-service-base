@@ -1,0 +1,22 @@
+{
+  "name": "witness",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "dev": "rm -rf dist && tsc --watch"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@witnessco/client": "^0.2.0"
+  }
+}

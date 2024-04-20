@@ -1,9 +1,12 @@
 import { Controller, Get, Post, Res, Body, HttpStatus } from '@nestjs/common';
+import { ethers } from 'ethers';
 import { CreateAttestationDto } from './create-attestation.dto';
 import { Response } from 'express';
-import { TranslationAttestation } from 'translation-attestation';
-import 'dotenv/config'
-import { SignedOffchainAttestation } from "@ethereum-attestation-service/eas-sdk";
+import { TRANSLATION_ATTESTATION_SCHEMA, encodeTranslationAttestationSchema, Attestor } from '@repo/attestation';
+import 'dotenv/config';
+import { SignedOffchainAttestation } from '@ethereum-attestation-service/eas-sdk';
+import { uploadText } from 'lighthouse';
+import { Witness } from 'witness';
 
 (BigInt.prototype as any).toJSON = function () {
   // TODO: if the number is too large, it should not be casted as integer
@@ -12,93 +15,103 @@ import { SignedOffchainAttestation } from "@ethereum-attestation-service/eas-sdk
 
 @Controller('attestations')
 export class AttestationsController {
-
   @Get()
   async findAll(@Res() res: Response): Promise<Response> {
-    let translationAttestation = new TranslationAttestation(
-        process.env.EthNetwork,
-        process.env.AlchemyAPIKey,
-        process.env.WalletPrivateKey,
-        process.env.SchemaUid,
-        process.env.SchemaRegistryContractAddress,
-        process.env.EasContractAddress,
-        process.env.RecipientAddress
+    const recipientAddress = process.env.RECIPIENT_ADDRESS;
+    const schemaRegistryContractAddress = process.env.SCHEMA_REGISTRY_CONTRACT_ADDRESS;
+    const provider = new ethers.AlchemyProvider(process.env.ETH_NETWORK, process.env.ALCHEMY_API_KEY);
+    const signer = new ethers.Wallet(process.env.ATTESTOR_WALLET_PRIVATE_KEY, provider);
+    const easContractAddress = process.env.EAS_CONTRACT_ADDRESS;
+    const schemaUid = process.env.SCHEMA_UID;
+    const refUID = process.env.REF_UID;
+    console.log(refUID);
+
+    const data = {
+      sourceId: 'youtube-a',
+      sourceStringId: 'string-1',
+      translatedStringId: 'string-2',
+      score: 90,
+    };
+
+    const encodedData = encodeTranslationAttestationSchema(data);
+    const attestor = new Attestor(
+        signer,
+        TRANSLATION_ATTESTATION_SCHEMA,
+        schemaRegistryContractAddress,
+        easContractAddress,
+        recipientAddress,
+        schemaUid
     );
-    translationAttestation.ping();
-    let attestation = await translationAttestation.attestTranslationOffChain(1, 'videoId', 'lineId', 'translatedLineId');
-    console.log(attestation);
 
-    let verified = await translationAttestation.verifyTranslationAttestation({
-      signer: attestation.signer,
-      sig: attestation.sig as SignedOffchainAttestation
-    });
-    console.log(verified)
+    const attestation = await attestor.attestOffChain(encodedData, false, refUID);
+    const verified = await attestor.verify(attestation);
+    console.log(verified);
 
-    return res.status(HttpStatus.OK).json(attestation);
+    const attestationStr = await attestor.attestOffChain(encodedData, true, refUID);
+    const verifiedStr = await attestor.verifyAttestationStr(attestationStr);
+    console.log(verifiedStr);
+
+    uploadText('Hello World', process.env.LIGHTHOUSE_API_KEY);
+    // let witness = new Witness();
+    // witness.ping();
+    // let proof = await witness.witness('Hello World');
+    // console.log(proof);
+    return res.status(HttpStatus.OK).json({ message: 'pong', attestation: attestation, verified: verified, attestationStr: attestationStr, verifiedStr: verifiedStr});
   }
 
   @Post()
   async create(
-      @Body() createAttestationDto: CreateAttestationDto,
-      @Res() res: Response,
+    @Body() createAttestationDto: CreateAttestationDto,
+    @Res() res: Response,
   ): Promise<Response> {
     // validate the input
     if (
-        createAttestationDto.sig === undefined ||
-        createAttestationDto.signer === undefined
+      createAttestationDto.sig === undefined ||
+      createAttestationDto.signer === undefined
     ) {
       res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: 'sig and signer are required' });
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: 'sig and signer are required' });
     }
 
-    // verify if the attestations are valid
-    const translationAttestation = new TranslationAttestation(
-        process.env.EthNetwork,
-        process.env.AlchemyAPIKey,
-        process.env.WalletPrivateKey,
-        process.env.SchemaUid,
-        process.env.SchemaRegistryContractAddress,
-        process.env.EasContractAddress,
-        process.env.RecipientAddress
+    // convert the attestationDto to a string
+    // TODO: wrapper for json object to attestation
+    const attestationStr = JSON.stringify(createAttestationDto);
+
+    const recipientAddress = process.env.RECIPIENT_ADDRESS;
+    const schemaRegistryContractAddress = process.env.SCHEMA_REGISTRY_CONTRACT_ADDRESS;
+    const provider = new ethers.AlchemyProvider(process.env.ETH_NETWORK, process.env.ALCHEMY_API_KEY);
+    const signer = new ethers.Wallet(process.env.ATTESTOR_WALLET_PRIVATE_KEY, provider);
+    const easContractAddress = process.env.EAS_CONTRACT_ADDRESS;
+    const schemaUid = process.env.SCHEMA_UID;
+
+    const attestor = new Attestor(
+        signer,
+        TRANSLATION_ATTESTATION_SCHEMA,
+        schemaRegistryContractAddress,
+        easContractAddress,
+        recipientAddress,
+        schemaUid
     );
 
-    const verified = await translationAttestation.verifyTranslationAttestation({
-      signer: createAttestationDto.signer,
-      sig: {
-        domain: {
-          chainId: BigInt(createAttestationDto.sig.domain.chainId),
-          name: createAttestationDto.sig.domain.name,
-          verifyingContract: createAttestationDto.sig.domain.verifyingContract,
-          version: createAttestationDto.sig.domain.version
-        },
-        primaryType: createAttestationDto.sig.primaryType,
-        types: createAttestationDto.sig.types,
-        signature: createAttestationDto.sig.signature,
-        uid: createAttestationDto.sig.uid,
-        message: {
-          recipient: createAttestationDto.sig.message.recipient,
-          schema: createAttestationDto.sig.message.schema,
-          time: BigInt(createAttestationDto.sig.message.time),
-          expirationTime: BigInt(createAttestationDto.sig.message.expirationTime),
-          refUID: createAttestationDto.sig.message.refUID,
-          data: createAttestationDto.sig.message.data,
-          revocable: createAttestationDto.sig.message.revocable,
-          salt: createAttestationDto.sig.message.salt,
-          version: createAttestationDto.sig.message.version,
-        },
-        version: createAttestationDto.sig.version
-      }
-    });
+    // verify the attestation
+    const verified = await attestor.verifyAttestationStr(attestationStr);
 
     if (!verified) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Attestation is not valid' });
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: 'Attestation is not valid' });
     }
 
     // if the attestation is valid, store it in IPFS
-    // TODO: store the attestation in IPFS
+    uploadText(JSON.stringify(createAttestationDto), process.env.LIGHTHOUSE_API_KEY);
+
+    // witness the attestation
+    // const witness = new Witness();
+    // const proof = await witness.witness(JSON.stringify(createAttestationDto));
+    // return res.status(HttpStatus.OK).json({ message: 'Attestation is valid', proof: proof });
 
     // return the response
-    return res.status(HttpStatus.OK).json({ message: 'Attestation is valid' });
+    return res.status(HttpStatus.OK).json({ message: 'Attestation is valid'});
   }
 }
