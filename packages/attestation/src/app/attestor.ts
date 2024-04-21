@@ -84,9 +84,8 @@ export default class Attestor {
 
   async attestOffChain(
     encodedData: string,
-    responseAsText: boolean = false,
     refUID: string = '0x0000000000000000000000000000000000000000000000000000000000000000',
-  ): Promise<Attestation | string> {
+  ): Promise<Attestation> {
     const EASContractAddress = this.easContractAddress;
     const eas = new EAS(EASContractAddress);
     eas.connect(this.signer);
@@ -115,21 +114,9 @@ export default class Attestor {
     );
 
     let attestation = {
-      sig: {
-        domain: offchainAttestation.domain,
-        primaryType: offchainAttestation.primaryType,
-        types: offchainAttestation.types,
-        signature: offchainAttestation.signature,
-        uid: offchainAttestation.uid,
-        message: offchainAttestation.message,
-        version: offchainAttestation.version,
-      },
+      sig: offchainAttestation,
       signer: await this.signer.getAddress(),
     };
-
-    if (responseAsText) {
-      return JSON.stringify(attestation);
-    }
 
     return attestation;
   }

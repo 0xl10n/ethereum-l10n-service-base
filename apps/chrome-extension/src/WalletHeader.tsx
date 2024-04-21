@@ -21,13 +21,14 @@ export const WalletHeader = () => {
     const { signer, chainId } = useWalletContext();
     const { name, imageUrl } = CHAIN_INFO_BY_ID[chainId()]
     return (
-        <div class="text-xl">
+        <div class="text-lg pb-2">
             <div class="flex flex-row">
                 <div class="flex flex-row pr-4">
                     <img src={imageUrl || "https://chainlist.org/unknown-logo.png"}
-                        width="26" height="26" class="rounded-full flex-shrink-0 flex relative" alt="Sepolia logo"></img>
+                        class="rounded-full flex-shrink-0 flex relative w-6 h-6 m-2" alt="Sepolia logo"></img>
                     {name}
                 </div>
+                <div class="divider"></div>
                 <div>
                     {signer.address}
                 </div>

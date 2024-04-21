@@ -4,6 +4,7 @@ import { usePlaybackReceivedContext } from './PlaybackReceivedContext';
 
 import { isCurrentCue, Locale } from '@repo/subs';
 import { useSubsContext } from './SubsContext';
+import { createStore } from 'solid-js/store';
 
 const TranslationContext = createContext();
 
@@ -11,6 +12,13 @@ const TranslationContext = createContext();
 export const TranslationContextProvider = (props) => {
 
     const [playbackTimeSReceived, sendPlaybackControl] = usePlaybackReceivedContext();
+
+    const [localeStore, setLocaleStore] = createStore({
+        fromLocale: Locale.En,
+        toLocale: Locale.ZhTw
+    })
+
+
 
 
     const subsContext = useSubsContext();
@@ -31,7 +39,8 @@ export const TranslationContextProvider = (props) => {
     return (
         <TranslationContext.Provider
             value={{
-                activeCue
+                activeCue,
+                localeStore
             }}
         >
             {props.children}

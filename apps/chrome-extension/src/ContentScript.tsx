@@ -94,12 +94,11 @@ const SuggestionContainer = () => {
           </h2>
         </div>
         <div class="p-5">
-          <textarea id="suggestion-textarea" placeholder="Add Suggestion" class="textarea textarea-bordered textarea-lg w-11/12" ></textarea>
-          <div class="relative w-full">
-            <button id="submit-button" class="right-0 btn btn-outline text-white" onclick={submitSuggestion}>Submit</button>
-          </div>
-        </div>
-      </div>
+          <textarea id="suggestion-textarea" placeholder="Add Suggestion" class="textarea textarea-bordered textarea-lg w-11/12 p-5" ></textarea>
+          <div id="submit-button" onclick={submitSuggestion}
+            class="flex flex-row-reverse w-full"><button class="btn btn-outline text-white text-xl">Submit</button></div>
+        </div >
+      </div >
     </div >
   )
 }

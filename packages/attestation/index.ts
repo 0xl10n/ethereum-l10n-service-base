@@ -19,3 +19,13 @@ export {
   EAS_CONTRACT_ADDRESS,
   SCHEMA_REGISTRY_CONTRACT_ADDRESS,
 } from './src/adapters/eas';
+
+export {
+  Attestation,
+  EAS,
+  SchemaEncoder,
+  SchemaRegistry,
+  Offchain,
+  OffchainAttestationVersion,
+  SignedOffchainAttestation,
+} from '@ethereum-attestation-service/eas-sdk';

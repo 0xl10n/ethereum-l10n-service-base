@@ -23,11 +23,14 @@ export const createSourceStringId = (
 };
 
 export const createTranslationStringId = (
+  sourceId: string,
   fromLocale: string,
   toLocale: string,
   stringId: string,
 ) => {
-  return [createTranslationPrefix(fromLocale, toLocale), stringId].join('-');
+  return [createSourceStringId(sourceId, fromLocale, toLocale), stringId].join(
+    '-',
+  );
 };
 
 export const createTranscriptFileName = (

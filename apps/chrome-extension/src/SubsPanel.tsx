@@ -17,7 +17,7 @@ export const SubsRows = ({
 
 
     const { activeCue } = useTranslationContext();
-
+    console.log('activeCue', activeCue, activeCue(), activeCue.id)
 
     const onCueClick = (cue) => {
         sendPlaybackControl('seekTo', { playbackS: cue.startTime - CUE_BUFFER, isPause: true })
@@ -34,7 +34,7 @@ export const SubsRows = ({
                     <tr
                         onClick={() => onCueClick(cue)}
                         class={
-                            (activeCue.id === cue.id ? activeClassName : defaultClassName) +
+                            (activeCue().id === cue.id ? activeClassName : defaultClassName) +
                             ' text-white rounded'
                         }
                     >
@@ -71,7 +71,6 @@ export const SubsPanel: Component = () => {
                         <SubsRows
                             cuesFrom={cuesByLocale[Locale.En] || []}
                             cuesTo={cuesByLocale[Locale.ZhTw] || []}
-                            currentPlaybackS={currentPlaybackS}
                             sendPlaybackControl={sendPlaybackControl}
                         />
                     </tbody>

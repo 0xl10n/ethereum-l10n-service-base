@@ -1,15 +1,17 @@
 import { Locale, NAME_BY_LOCALE } from '@repo/subs';
+import { useTranslationContext } from './TranslationContext';
 
-export const LanguageHeader = ({
-    fromLocale, toLocale
-}: { fromLocale: Locale, toLocale: Locale }) => {
+export const LanguageHeader = () => {
+
+
+    const { localeStore } = useTranslationContext()
 
     return (
-        <div class="text-xl">
+        <div class="text-xl font-bold">
             <div class="flex">
                 <span>
                     <h2>
-                        {NAME_BY_LOCALE[fromLocale]}
+                        {NAME_BY_LOCALE[localeStore?.fromLocale]}
                     </h2>
                 </span>
                 <span>
@@ -17,7 +19,7 @@ export const LanguageHeader = ({
                 </span>
                 <span>
                     <h2>
-                        {NAME_BY_LOCALE[toLocale]}
+                        {NAME_BY_LOCALE[localeStore?.toLocale]}
                     </h2>
                 </span>
             </div>

@@ -23,7 +23,7 @@ const App: Component = () => {
             <TranslationContextProvider>
               <div class="bg-base-100 p-5">
                 <WalletHeader />
-                <LanguageHeader fromLocale={Locale.En} toLocale={Locale.ZhTw} />
+                <LanguageHeader />
                 <SubsPanel />
                 <AttestButtonGroup />
               </div>
