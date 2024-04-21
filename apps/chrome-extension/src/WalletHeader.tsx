@@ -6,6 +6,10 @@ const CHAIN_INFO_BY_ID = {
         name: 'Sepolia',
         imageUrl: 'https://chainlist.org/unknown-logo.png'
     },
+    421613: {
+        name: 'Arbitrum Goerli',
+        imageUrl: 'https://icons.llamao.fi/icons/chains/rsz_arbitrum.jpg'
+    },
     421614: {
         name: 'Arbitrum Sepolia',
         imageUrl: 'https://icons.llamao.fi/icons/chains/rsz_arbitrum.jpg'

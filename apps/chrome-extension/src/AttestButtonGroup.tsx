@@ -69,8 +69,8 @@ export const AttestButtonGroup = () => {
     return (
         <div class="text-xl" >
             <div class="flex flex-col">
-                <div class="flex flex-row p-2">
-                    Translation Id:
+                <div class="flex flex-row content-center">
+                    Translation Id: &nbsp;
                     <div class="badge badge-primary text-lg px-4">
 
                         {createTranslationStringId(sourceId, fromLocale, toLocale, activeCue().id)}

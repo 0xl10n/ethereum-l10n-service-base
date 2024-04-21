@@ -56,7 +56,7 @@ export class AttestationsController {
 
     // TODO take in attesation for storage
 
-    const attestationStr = await attestor.attestOffChain(encodedData, true, refUID);
+    const attestationStr = await attestor.attestOffChain(encodedData, refUID);
     const verifiedStr = await attestor.verify(attestationStr);
     console.log(verifiedStr);
     // const attestation = await attestor.attestOffChain(
@@ -151,6 +151,10 @@ export class AttestationsController {
     const proof = await witness.witness(JSON.stringify(createAttestationDto));
 
     // return the response
-    return res.status(HttpStatus.OK).json({ message: 'Attestation is valid', cid: storedObj.cid, proof: proof});
+    return res.status(HttpStatus.OK).json({
+      message: 'Attestation is valid',
+      cid: storedObj.cid,
+      proof: proof,
+    });
   }
 }
