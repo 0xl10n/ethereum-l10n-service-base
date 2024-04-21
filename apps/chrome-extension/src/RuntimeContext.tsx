@@ -23,7 +23,6 @@ export const RuntimeContextProvider = (props) => {
             function (request, sender, sendResponse) {
                 console.log("Message from the content script:", request);
                 setPlaybackTimeSReceived(request.playbackTimeS);
-                console.log(playbackTimeSReceived())
                 sendResponse({ message: "Roger" });
             }
         );

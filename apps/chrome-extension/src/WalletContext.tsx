@@ -1,4 +1,4 @@
-import { createContext, createEffect, useContext } from 'solid-js';
+import { createContext, createEffect, createMemo, createSignal, useContext } from 'solid-js';
 import { createWalletClient, custom, http } from 'viem'
 import { mainnet } from 'viem/chains'
 // import * as LitJsSdk from "@lit-protocol/lit-node-client";
@@ -17,7 +17,14 @@ const demoWalletPrivateKey = '0x3db76cdd104b07bebf2221076fab7485c03b59f5af253224
  */
 
 
+
+
 export const WalletContextProvider = (props) => {
+    const [chainId, setChainId] = createSignal(11155111)
+
+    // 42161 arbitrum
+    // 421614 arbitrum sepolia
+    // 10200 gnosis chiado Testnet
 
     const provider = ethers.getDefaultProvider(11155111)
     const signer = new Wallet(demoWalletPrivateKey, provider)
@@ -27,6 +34,12 @@ export const WalletContextProvider = (props) => {
         chain: mainnet,
         transport: http(),
         account
+    })
+
+
+    createEffect(async () => {
+        const { chainId } = await provider.getNetwork()
+        setChainId(Number(chainId))
     })
 
 
@@ -59,7 +72,8 @@ export const WalletContextProvider = (props) => {
 
     return <WalletContext.Provider
         value={{
-            signer
+            signer,
+            chainId
             // client
         }}
     >{props.children}</WalletContext.Provider>

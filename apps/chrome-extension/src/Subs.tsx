@@ -32,8 +32,6 @@ export const ActiveSubs = () => {
             cue => isCurrentCue(cue, currentPlaybackS())
         );
 
-        console.log('currentCues', cueFrom, cueTo)
-
         return [cueFrom, cueTo];
 
     })

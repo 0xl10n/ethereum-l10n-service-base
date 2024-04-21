@@ -125,10 +125,9 @@ export const parseForCues = (
   const allCues = cues.pipe(
     takeUntil(flushed),
     map((cue: VTTCue, id: number) => {
-      return {
-        ...cue,
-        id: id.toString(),
-      };
+      cue.id = id.toString();
+      // cant use ...cue destructure for VTTCue
+      return cue;
     }),
     // take in processor so client can decide, esp if post-processed
     shareReplay(),

@@ -8,12 +8,10 @@ import { useTranslationContext } from './TranslationContext';
 export const SubsRows = ({
     cuesFrom = [],
     cuesTo = [],
-    currentPlaybackS,
     sendPlaybackControl
 }: {
     cuesFrom: VTTCue[];
     cuesTo: VTTCue[];
-    currentPlaybackS: () => number;
     sendPlaybackControl: any
 }) => {
 
@@ -67,7 +65,7 @@ export const SubsPanel: Component = () => {
 
     return (
         <div class="bg-base-200 text-white">
-            <div class="overflow-x-auto overflow-y-scroll max-h-[90vh] h-full m-2">
+            <div class="overflow-x-auto overflow-y-scroll max-h-[75vh] h-full m-2">
                 <table class="table">
                     <tbody>
                         <SubsRows
