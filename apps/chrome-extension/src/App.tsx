@@ -7,20 +7,30 @@ import { RuntimeContextProvider } from './RuntimeContext';
 import { PlaybackReceivedContextProvider } from './PlaybackReceivedContext';
 import { SubsPanel } from './SubsPanel';
 import { LanguageHeader } from './LanguageHeader';
+import { WalletContextProvider } from './WalletContext';
+import { WalletHeader } from './WalletHeader';
+import { TranslationContextProvider } from './TranslationContext';
+import { AttestButtonGroup } from './AttestButtonGroup';
 
 
 const App: Component = () => {
   return (
-    <RuntimeContextProvider>
-      <PlaybackReceivedContextProvider>
-        <SubsContextProvider>
-          <div class="bg-base-100 p-5">
-            <LanguageHeader fromLocale={Locale.En} toLocale={Locale.ZhTw} />
-            <SubsPanel />
-          </div>
-        </SubsContextProvider>
-      </PlaybackReceivedContextProvider>
 
+    <RuntimeContextProvider>
+      <WalletContextProvider>
+        <PlaybackReceivedContextProvider>
+          <SubsContextProvider>
+            <TranslationContextProvider>
+              <div class="bg-base-100 p-5">
+                <WalletHeader />
+                <LanguageHeader fromLocale={Locale.En} toLocale={Locale.ZhTw} />
+                <SubsPanel />
+                <AttestButtonGroup />
+              </div>
+            </TranslationContextProvider>
+          </SubsContextProvider>
+        </PlaybackReceivedContextProvider>
+      </WalletContextProvider>
     </RuntimeContextProvider>
 
   );

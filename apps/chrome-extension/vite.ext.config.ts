@@ -1,8 +1,9 @@
 import { resolve } from 'path';
 import { createConfig } from './vite.base.config';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 const build = {
-  target: 'es2015',
+  target: 'es2020',
   outDir: './dist-ext',
   lib: {
     entry: {
@@ -18,4 +19,13 @@ const build = {
   },
 };
 
-export default createConfig(build);
+const plugins = [
+  nodePolyfills({
+    globals: {
+      Buffer: true, // can also be 'build', 'dev', or false
+      global: true,
+      process: true,
+    },
+  }),
+];
+export default createConfig(build, plugins);

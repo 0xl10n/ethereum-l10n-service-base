@@ -3,6 +3,7 @@ import { Component, For, createMemo } from 'solid-js';
 import { usePlaybackReceivedContext } from './PlaybackReceivedContext';
 import { useSubsContext } from './SubsContext';
 import { isCurrentCue, Locale, CUE_BUFFER } from '@repo/subs';
+import { useTranslationContext } from './TranslationContext';
 
 export const SubsRows = ({
     cuesFrom = [],
@@ -16,13 +17,9 @@ export const SubsRows = ({
     sendPlaybackControl: any
 }) => {
 
-    // TODO more efficient to seek from cues instead of one observer each
-    const findActiveCue = createMemo(() => {
-        return _.find(
-            cuesFrom,
-            cue => isCurrentCue(cue, currentPlaybackS())
-        );
-    })
+
+    const { activeCue } = useTranslationContext();
+
 
     const onCueClick = (cue) => {
         sendPlaybackControl('seekTo', { playbackS: cue.startTime - CUE_BUFFER, isPause: true })
@@ -31,7 +28,7 @@ export const SubsRows = ({
     const activeClassName = 'bg-base-content';
     const defaultClassName = 'bg-base-200 text-neutral-content';
 
-    console.log('check', cuesFrom.length, cuesTo.length)
+
     return (
         <div>
             <For each={cuesFrom}>
@@ -39,7 +36,7 @@ export const SubsRows = ({
                     <tr
                         onClick={() => onCueClick(cue)}
                         class={
-                            (findActiveCue().startTime === cue.startTime ? activeClassName : defaultClassName) +
+                            (activeCue.id === cue.id ? activeClassName : defaultClassName) +
                             ' text-white rounded'
                         }
                     >

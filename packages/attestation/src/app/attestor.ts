@@ -18,18 +18,18 @@ import { Attestation } from '../adapters/eas';
 export default class Attestor {
   private readonly signer: ethers.Signer;
   private readonly schema: string;
-  private readonly schemaUid: string;
+  private schemaUid: string;
   private readonly schemaRegistryContractAddress: string;
   private readonly easContractAddress: string;
   private readonly recipientAddress: string;
 
   constructor(
-      signer: ethers.Signer,
-      schema: string,
-      schemaRegistryContractAddress: string,
-      easContractAddress: string,
-      recipientAddress: string,
-      schemaUid?: string,
+    signer: ethers.Signer,
+    schema: string,
+    schemaRegistryContractAddress: string,
+    easContractAddress: string,
+    recipientAddress: string,
+    schemaUid?: string,
   ) {
     this.signer = signer;
     this.schema = schema;
@@ -41,9 +41,9 @@ export default class Attestor {
 
   async registerSchema(): Promise<any> {
     const schemaRegistryContractAddress: string =
-        this.schemaRegistryContractAddress;
+      this.schemaRegistryContractAddress;
     const schemaRegistry: SchemaRegistry = new SchemaRegistry(
-        schemaRegistryContractAddress,
+      schemaRegistryContractAddress,
     );
     schemaRegistry.connect(this.signer);
 
@@ -55,6 +55,7 @@ export default class Attestor {
     });
     const newSchemaID: string = await transaction.wait();
     console.log(newSchemaID);
+    this.schemaUid = newSchemaID;
     return newSchemaID;
   }
 
@@ -81,26 +82,35 @@ export default class Attestor {
   }
 
   async attestOffChain(
-      encodedData: string,
-      responseAsText: boolean = false,
-      refUID: string = '0x0000000000000000000000000000000000000000000000000000000000000000',
-  ): Promise<any> {
+    encodedData: string,
+    responseAsText: boolean = false,
+    refUID: string = '0x0000000000000000000000000000000000000000000000000000000000000000',
+  ): Promise<Attestation | string> {
     const EASContractAddress = this.easContractAddress;
     const eas = new EAS(EASContractAddress);
     eas.connect(this.signer);
     const offchain = await eas.getOffchain();
 
+    console.log({
+      schema: this.schemaUid,
+      recipient: this.recipientAddress,
+      time: BigInt(Math.floor(Date.now() / 1000)),
+      expirationTime: 0n,
+      revocable: true,
+      refUID: refUID,
+      data: encodedData,
+    });
     const offchainAttestation = await offchain.signOffchainAttestation(
-        {
-          schema: this.schemaUid,
-          recipient: this.recipientAddress,
-          time: BigInt(Math.floor(Date.now() / 1000)),
-          expirationTime: 0n,
-          revocable: true,
-          refUID: refUID,
-          data: encodedData,
-        },
-        this.signer,
+      {
+        schema: this.schemaUid,
+        recipient: this.recipientAddress,
+        time: BigInt(Math.floor(Date.now() / 1000)),
+        expirationTime: 0n,
+        revocable: true,
+        refUID: refUID,
+        data: encodedData,
+      },
+      this.signer,
     );
 
     let attestation = {
@@ -123,9 +133,7 @@ export default class Attestor {
     return attestation;
   }
 
-  async verify(
-      attestation: Attestation,
-  ): Promise<boolean> {
+  async verify(attestation: Attestation): Promise<boolean> {
     const EAS_CONFIG = {
       address: attestation.sig.domain.verifyingContract,
       version: attestation.sig.domain.version,
@@ -138,8 +146,8 @@ export default class Attestor {
     let isValidAttestation = false;
     try {
       isValidAttestation = offchain.verifyOffchainAttestationSignature(
-          attestation.signer,
-          attestation.sig,
+        attestation.signer,
+        attestation.sig,
       );
     } catch (e) {
       console.error(e);
@@ -150,9 +158,7 @@ export default class Attestor {
     return isValidAttestation;
   }
 
-  async verifyAttestationStr(
-      attestationStr: string,
-  ): Promise<boolean> {
+  async verifyAttestationStr(attestationStr: string): Promise<boolean> {
     const attestationObj = JSON.parse(attestationStr);
     const attestation: Attestation = {
       signer: attestationObj.signer,
@@ -171,9 +177,7 @@ export default class Attestor {
           recipient: attestationObj.sig.message.recipient,
           schema: attestationObj.sig.message.schema,
           time: BigInt(attestationObj.sig.message.time),
-          expirationTime: BigInt(
-              attestationObj.sig.message.expirationTime,
-          ),
+          expirationTime: BigInt(attestationObj.sig.message.expirationTime),
           refUID: attestationObj.sig.message.refUID,
           data: attestationObj.sig.message.data,
           revocable: attestationObj.sig.message.revocable,
@@ -181,7 +185,7 @@ export default class Attestor {
           version: attestationObj.sig.message.version,
         },
         version: attestationObj.sig.version,
-      }
+      },
     };
 
     return this.verify(attestation);

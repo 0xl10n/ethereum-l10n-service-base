@@ -7,11 +7,27 @@ import { Locale } from './locale.ts';
 // deterministic naming convention such that systems can work tgt
 export const createAudioKey = () => {};
 
-export const createTranslationStringKey = (
+export const createTranslationPrefix = (
   fromLocale: string,
   toLocale: string,
 ) => {
   return [fromLocale, toLocale].join('-');
+};
+
+export const createSourceStringId = (
+  sourceId: string,
+  fromLocale: string,
+  stringId: string,
+) => {
+  return [sourceId, fromLocale, stringId].join('-');
+};
+
+export const createTranslationStringId = (
+  fromLocale: string,
+  toLocale: string,
+  stringId: string,
+) => {
+  return [createTranslationPrefix(fromLocale, toLocale), stringId].join('-');
 };
 
 export const createTranscriptFileName = (
@@ -37,7 +53,5 @@ export const createTranslationWithLocalePairs = (
   toLocale: string,
   by: string,
 ) => {
-  return [videoId, createTranslationStringKey(fromLocale, toLocale), by].join(
-    '-',
-  );
+  return [videoId, createTranslationPrefix(fromLocale, toLocale), by].join('-');
 };

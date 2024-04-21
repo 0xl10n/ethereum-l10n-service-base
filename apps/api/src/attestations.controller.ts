@@ -2,7 +2,11 @@ import { Controller, Get, Post, Res, Body, HttpStatus } from '@nestjs/common';
 import { ethers } from 'ethers';
 import { CreateAttestationDto } from './create-attestation.dto';
 import { Response } from 'express';
-import { TRANSLATION_ATTESTATION_SCHEMA, encodeTranslationAttestationSchema, Attestor } from '@repo/attestation';
+import {
+  TRANSLATION_ATTESTATION_SCHEMA,
+  encodeTranslationAttestationSchema,
+  Attestor,
+} from '@repo/attestation';
 import 'dotenv/config';
 import { SignedOffchainAttestation } from '@ethereum-attestation-service/eas-sdk';
 import { uploadText } from 'lighthouse';
@@ -18,9 +22,16 @@ export class AttestationsController {
   @Get()
   async findAll(@Res() res: Response): Promise<Response> {
     const recipientAddress = process.env.RECIPIENT_ADDRESS;
-    const schemaRegistryContractAddress = process.env.SCHEMA_REGISTRY_CONTRACT_ADDRESS;
-    const provider = new ethers.AlchemyProvider(process.env.ETH_NETWORK, process.env.ALCHEMY_API_KEY);
-    const signer = new ethers.Wallet(process.env.ATTESTOR_WALLET_PRIVATE_KEY, provider);
+    const schemaRegistryContractAddress =
+      process.env.SCHEMA_REGISTRY_CONTRACT_ADDRESS;
+    const provider = new ethers.AlchemyProvider(
+      process.env.ETH_NETWORK,
+      process.env.ALCHEMY_API_KEY,
+    );
+    const signer = new ethers.Wallet(
+      process.env.ATTESTOR_WALLET_PRIVATE_KEY,
+      provider,
+    );
     const easContractAddress = process.env.EAS_CONTRACT_ADDRESS;
     const schemaUid = process.env.SCHEMA_UID;
     const refUID = process.env.REF_UID;
@@ -35,28 +46,44 @@ export class AttestationsController {
 
     const encodedData = encodeTranslationAttestationSchema(data);
     const attestor = new Attestor(
-        signer,
-        TRANSLATION_ATTESTATION_SCHEMA,
-        schemaRegistryContractAddress,
-        easContractAddress,
-        recipientAddress,
-        schemaUid
+      signer,
+      TRANSLATION_ATTESTATION_SCHEMA,
+      schemaRegistryContractAddress,
+      easContractAddress,
+      recipientAddress,
+      schemaUid,
     );
 
-    const attestation = await attestor.attestOffChain(encodedData, false, refUID);
-    const verified = await attestor.verify(attestation);
-    console.log(verified);
+    // TODO take in attesation for storage
 
-    const attestationStr = await attestor.attestOffChain(encodedData, true, refUID);
-    const verifiedStr = await attestor.verifyAttestationStr(attestationStr);
-    console.log(verifiedStr);
+    // const attestation = await attestor.attestOffChain(
+    //   encodedData,
+    //   false,
+    //   refUID,
+    // );
+    // const verified = await attestor.verify(attestation);
+    // console.log(verified);
+
+    // const attestationStr = await attestor.attestOffChain(
+    //   encodedData,
+    //   true,
+    //   refUID,
+    // );
+    // const verifiedStr = await attestor.verifyAttestationStr(attestationStr);
+    // console.log(verifiedStr);
 
     uploadText('Hello World', process.env.LIGHTHOUSE_API_KEY);
     // let witness = new Witness();
     // witness.ping();
     // let proof = await witness.witness('Hello World');
     // console.log(proof);
-    return res.status(HttpStatus.OK).json({ message: 'pong', attestation: attestation, verified: verified, attestationStr: attestationStr, verifiedStr: verifiedStr});
+    return res.status(HttpStatus.OK).json({
+      message: 'pong',
+      // attestation: attestation,
+      // verified: verified,
+      // attestationStr: attestationStr,
+      // verifiedStr: verifiedStr,
+    });
   }
 
   @Post()
@@ -79,19 +106,26 @@ export class AttestationsController {
     const attestationStr = JSON.stringify(createAttestationDto);
 
     const recipientAddress = process.env.RECIPIENT_ADDRESS;
-    const schemaRegistryContractAddress = process.env.SCHEMA_REGISTRY_CONTRACT_ADDRESS;
-    const provider = new ethers.AlchemyProvider(process.env.ETH_NETWORK, process.env.ALCHEMY_API_KEY);
-    const signer = new ethers.Wallet(process.env.ATTESTOR_WALLET_PRIVATE_KEY, provider);
+    const schemaRegistryContractAddress =
+      process.env.SCHEMA_REGISTRY_CONTRACT_ADDRESS;
+    const provider = new ethers.AlchemyProvider(
+      process.env.ETH_NETWORK,
+      process.env.ALCHEMY_API_KEY,
+    );
+    const signer = new ethers.Wallet(
+      process.env.ATTESTOR_WALLET_PRIVATE_KEY,
+      provider,
+    );
     const easContractAddress = process.env.EAS_CONTRACT_ADDRESS;
     const schemaUid = process.env.SCHEMA_UID;
 
     const attestor = new Attestor(
-        signer,
-        TRANSLATION_ATTESTATION_SCHEMA,
-        schemaRegistryContractAddress,
-        easContractAddress,
-        recipientAddress,
-        schemaUid
+      signer,
+      TRANSLATION_ATTESTATION_SCHEMA,
+      schemaRegistryContractAddress,
+      easContractAddress,
+      recipientAddress,
+      schemaUid,
     );
 
     // verify the attestation
@@ -104,7 +138,10 @@ export class AttestationsController {
     }
 
     // if the attestation is valid, store it in IPFS
-    uploadText(JSON.stringify(createAttestationDto), process.env.LIGHTHOUSE_API_KEY);
+    uploadText(
+      JSON.stringify(createAttestationDto),
+      process.env.LIGHTHOUSE_API_KEY,
+    );
 
     // witness the attestation
     // const witness = new Witness();
@@ -112,6 +149,6 @@ export class AttestationsController {
     // return res.status(HttpStatus.OK).json({ message: 'Attestation is valid', proof: proof });
 
     // return the response
-    return res.status(HttpStatus.OK).json({ message: 'Attestation is valid'});
+    return res.status(HttpStatus.OK).json({ message: 'Attestation is valid' });
   }
 }

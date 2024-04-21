@@ -14,3 +14,4 @@ apps/chrome-extension/dist*/*
 packages/attestation/dist/*
 
 .idea/
+

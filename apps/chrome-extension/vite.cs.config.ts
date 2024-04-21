@@ -4,7 +4,7 @@ import { createConfig } from './vite.base.config';
 // need es / .mjs otherwise "exports not defined"
 
 const build = {
-  target: 'es2015',
+  target: 'es2020',
   outDir: './dist-cs',
   lib: {
     entry: {

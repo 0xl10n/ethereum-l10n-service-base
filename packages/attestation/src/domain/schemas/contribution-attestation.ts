@@ -12,17 +12,21 @@ export type ContributionAttestationSchemaData = {
   // TODO: refId
 };
 
-export const CONTRIBUTION_ATTESTATION_SCHEMA = 'string s, uint8 a,  uint8 v';
+export const CONTRIBUTION_ATTESTATION_SCHEMA =
+  'string sourceId, uint8 allocation, uint8 version';
 
 export const encodeContributionAttestationSchema = (
   data: ContributionAttestationSchemaData,
 ) => {
   const schemaEncoder = new SchemaEncoder(CONTRIBUTION_ATTESTATION_SCHEMA);
 
-  const { sourceId, allocation, version } = data;
+  const { sourceId, allocation, version = 1 } = data;
   return schemaEncoder.encodeData([
-    { name: 's', value: sourceId, type: 'string' },
-    { name: 'a', value: allocation, type: 'uint8' },
-    { name: 'v', value: version, type: 'uint8' },
+    { name: 'sourceId', value: sourceId, type: 'string' },
+    { name: 'allocation', value: allocation, type: 'uint8' },
+    { name: 'version', value: version, type: 'uint8' },
   ]);
 };
+
+export const CONTRIBUTION_SCHEMA_UID =
+  '0xc9373310b63806678e86513c31bd1df74919ed8ad24ba931000566c1acea9416';
