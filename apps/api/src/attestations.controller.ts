@@ -56,6 +56,9 @@ export class AttestationsController {
 
     // TODO take in attesation for storage
 
+    const attestationStr = await attestor.attestOffChain(encodedData, true, refUID);
+    const verifiedStr = await attestor.verify(attestationStr);
+    console.log(verifiedStr);
     // const attestation = await attestor.attestOffChain(
     //   encodedData,
     //   false,
@@ -129,7 +132,7 @@ export class AttestationsController {
     );
 
     // verify the attestation
-    const verified = await attestor.verifyAttestationStr(attestationStr);
+    const verified = await attestor.verify(attestationStr);
 
     if (!verified) {
       return res
@@ -138,17 +141,16 @@ export class AttestationsController {
     }
 
     // if the attestation is valid, store it in IPFS
-    uploadText(
+    const storedObj = await uploadText(
       JSON.stringify(createAttestationDto),
       process.env.LIGHTHOUSE_API_KEY,
     );
 
     // witness the attestation
-    // const witness = new Witness();
-    // const proof = await witness.witness(JSON.stringify(createAttestationDto));
-    // return res.status(HttpStatus.OK).json({ message: 'Attestation is valid', proof: proof });
+    const witness = new Witness();
+    const proof = await witness.witness(JSON.stringify(createAttestationDto));
 
     // return the response
-    return res.status(HttpStatus.OK).json({ message: 'Attestation is valid' });
+    return res.status(HttpStatus.OK).json({ message: 'Attestation is valid', cid: storedObj.cid, proof: proof});
   }
 }

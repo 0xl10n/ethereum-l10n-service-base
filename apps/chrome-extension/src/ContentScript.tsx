@@ -3,10 +3,10 @@ import './index.css'
 import { render } from 'solid-js/web';
 import { ActiveSubs } from './Subs';
 import { PlaybackContextProvider, usePlaybackContext } from './PlaybackContext';
-import { SubsContextProvider } from './SubsContext';
+import { SubsContextProvider, SubsContextArgs, useSubsContext } from './SubsContext';
+import { Locale, createTranscriptFileName } from '@repo/subs';
 
 const PlaybackDisplay = () => {
-
   const [currentPlaybackS] = usePlaybackContext();
 
   return (
@@ -15,7 +15,6 @@ const PlaybackDisplay = () => {
     </div>
   )
 };
-
 
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
@@ -31,12 +30,61 @@ chrome.runtime.onMessage.addListener(
         video.pause();
       }
     }
-
-
   }
 );
 
 const SuggestionContainer = () => {
+  const submitSuggestion = async () => {
+    const subsContext: SubsContextArgs = useSubsContext()
+    const { cuesByLocale } = subsContext
+
+    let suggestionTextArea = document.querySelector('#suggestion-textarea');
+    let suggestionText = suggestionTextArea.value;
+
+    // update the button to disabled and loading
+    const submitButton = document.querySelector('#submit-button');
+    submitButton.disabled = true;
+    const video = document.querySelector('video');
+    console.log(video.currentTime);
+    submitButton.textContent = 'Loading...';
+
+    // TODO: wrap into shared function
+    let domain: string = window.location.hostname;
+    let videoId: string = window.location.search.split('v=')[1];
+    let sourceId: string;
+
+    switch (domain) {
+      case 'www.youtube.com':
+        sourceId = createTranscriptFileName('youtube', videoId, Locale.ZhTw);
+        break;
+      default:
+        return;
+    }
+
+    let response = await fetch('http://localhost:4000/suggestions', {
+      mode: "cors",
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        sourceId: sourceId,
+        sourceStringId: '1', // TODO: should be index of the vtt based on current time
+        text: suggestionText,
+      })
+    });
+    console.log('response', await response.json());
+    // update the button to submitted for 3 seconds
+    suggestionTextArea.value = '';
+    submitButton.disabled = false;
+    submitButton.textContent = 'Submitted';
+    submitButton.classList.add('btn-success');
+    setTimeout(() => {
+      submitButton.classList.remove('btn-success');
+      submitButton.textContent = 'Submit';
+    }, 1000);
+  }
+
   return (
     <div style="z-index:900;" class="fixed rounded-xl bg-base-200 w-full m-2 h-80 p-10 z-50 bottom-10">
       <div class="flex flex-col w-full h-100 rounded-xl text-white place-content-center">
@@ -46,10 +94,10 @@ const SuggestionContainer = () => {
           </h2>
         </div>
         <div class="p-5">
-
-          <textarea placeholder="Add Suggestion" class="textarea textarea-bordered textarea-lg w-11/12" ></textarea>
-
-          <div class="relative w-full"><button class="right-0 btn btn-outline text-white">Submit</button></div>
+          <textarea id="suggestion-textarea" placeholder="Add Suggestion" class="textarea textarea-bordered textarea-lg w-11/12" ></textarea>
+          <div class="relative w-full">
+            <button id="submit-button" class="right-0 btn btn-outline text-white" onclick={submitSuggestion}>Submit</button>
+          </div>
         </div>
       </div>
     </div >
@@ -75,7 +123,6 @@ const SubsContainer = () => {
     </PlaybackContextProvider>
   );
 };
-
 
 document.onreadystatechange = () => {
   if (document.readyState === 'complete') {

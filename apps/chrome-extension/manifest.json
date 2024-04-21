@@ -23,7 +23,14 @@
       ]
     }
   ],
-  "permissions": ["sidePanel"],
+  "host_permissions": [
+    "http://*/",
+    "https://*/"
+  ],
+  "permissions": [
+    "sidePanel",
+    "scripting"
+  ],
   "side_panel": {
     "default_path": "sidepanel.html"
   }

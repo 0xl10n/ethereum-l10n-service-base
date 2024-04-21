@@ -9,6 +9,7 @@ import {
 
 import { ethers } from 'ethers';
 import { Attestation } from '../adapters/eas';
+import {b} from "vitest/dist/reporters-LqC_WI4d";
 
 (BigInt.prototype as any).toJSON = function () {
   // TODO: if the number is too large, it should not be casted as integer
@@ -133,7 +134,11 @@ export default class Attestor {
     return attestation;
   }
 
-  async verify(attestation: Attestation): Promise<boolean> {
+  async verify(attestation: string | Attestation): Promise<boolean> {
+    if (typeof(attestation) === 'string') {
+      attestation = this.convertStrToAttestation(attestation);
+    }
+
     const EAS_CONFIG = {
       address: attestation.sig.domain.verifyingContract,
       version: attestation.sig.domain.version,
@@ -158,7 +163,7 @@ export default class Attestor {
     return isValidAttestation;
   }
 
-  async verifyAttestationStr(attestationStr: string): Promise<boolean> {
+  convertStrToAttestation(attestationStr: string): Attestation {
     const attestationObj = JSON.parse(attestationStr);
     const attestation: Attestation = {
       signer: attestationObj.signer,
@@ -188,6 +193,6 @@ export default class Attestor {
       },
     };
 
-    return this.verify(attestation);
+    return attestation;
   }
 }
