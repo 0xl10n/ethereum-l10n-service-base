@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`calculateDistribution() it returns [[address, distributionPercentage]] 1`] = `
+exports[`calculateDistribution() > it returns [[address, distributionPercentage]] 1`] = `
 [
   [
     "0x1234",
@@ -25,7 +25,7 @@ exports[`calculateDistribution() it returns [[address, distributionPercentage]] 
 ]
 `;
 
-exports[`createAdjustedScores() it adds "adjustedScores" to tranlsation inputs 1`] = `
+exports[`createAdjustedScores() > it adds "adjustedScores" to tranlsation inputs 1`] = `
 [
   {
     "adjustedScore": "10",
@@ -107,7 +107,7 @@ exports[`createAdjustedScores() it adds "adjustedScores" to tranlsation inputs 1
 ]
 `;
 
-exports[`createEditDistanceMultiplier() it adds "editDistance" to tranlsation inputs 1`] = `
+exports[`createEditDistanceMultiplier() > it adds "editDistance" to tranlsation inputs 1`] = `
 [
   {
     "contributedAtMs": 1618000000000n,
@@ -175,7 +175,7 @@ exports[`createEditDistanceMultiplier() it adds "editDistance" to tranlsation in
 ]
 `;
 
-exports[`decayMultiplier() it adds "decayMultiplier" to tranlsation objects 1`] = `
+exports[`decayMultiplier() > it adds "decayMultiplier" to tranlsation objects 1`] = `
 [
   {
     "contributedAtMs": 1618000000000n,

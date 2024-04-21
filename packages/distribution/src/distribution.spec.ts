@@ -1,4 +1,4 @@
-import { jest, describe, test, expect, beforeAll } from '@jest/globals';
+import { describe, test, expect } from 'vitest';
 import fc from 'fast-check';
 import {
   each,flatten, flow, get, groupBy, map, mapValues,
