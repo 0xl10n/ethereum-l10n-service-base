@@ -84,9 +84,9 @@ contract ELSStrategy is MicroGrantsBaseStrategy {
         return easInfo.eas.getAttestation(uid);
     }
 
-    /// @notice Returns if the attestation is expired or not
+    /// @notice Returns if the attestation exists & not expiered
     /// @param uid The attestation UID to check
-    function isAttestationExpired(bytes32 uid) external view returns (bool) {
+    function isAttestationVerified(bytes32 uid) external view returns (bool) {
         if (easInfo.eas.getAttestation(uid).expirationTime < block.timestamp) {
             return true;
         }
@@ -188,8 +188,6 @@ contract ELSStrategy is MicroGrantsBaseStrategy {
         if (!allocators[_sender]) revert UNAUTHORIZED();
     }
 
-// TODO extract from there
-    // @notice set when after EAS attestation verified
     function setAllowedRecipientIds(
         address[] memory _recipientIds,
         bytes32[] memory _attestationUIDs)
@@ -204,9 +202,9 @@ contract ELSStrategy is MicroGrantsBaseStrategy {
                 revert ALREADY_ADDED();
             }
 
-            bool isExpired = this.isAttestationExpired(attestationUID);
+            bool isVerified = this.isAttestationVerified(attestationUID);
 
-            if (isExpired) {
+            if (isVerified) {
                 revert INVALID_ATTESTATION();
             }
             recipientIdToAttestationUID[recipientId] = attestationUID;
@@ -216,6 +214,5 @@ contract ELSStrategy is MicroGrantsBaseStrategy {
             }
         }
     }
-
 
 }

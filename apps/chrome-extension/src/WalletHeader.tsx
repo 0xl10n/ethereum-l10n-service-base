@@ -26,13 +26,15 @@ export const WalletHeader = () => {
     const { name, imageUrl } = CHAIN_INFO_BY_ID[chainId()]
     return (
         <div class="text-lg pb-2">
-            <div class="flex flex-row">
+            <div class="flex flex-row items-center">
                 <div class="flex flex-row pr-4">
                     <img src={imageUrl || "https://chainlist.org/unknown-logo.png"}
                         class="rounded-full flex-shrink-0 flex relative w-6 h-6 m-2" alt="Sepolia logo"></img>
-                    {name}
                 </div>
                 <div class="divider"></div>
+                <div>
+                    {name}
+                </div>
                 <div>
                     {signer.address}
                 </div>

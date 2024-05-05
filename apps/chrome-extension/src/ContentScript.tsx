@@ -86,7 +86,7 @@ const SuggestionContainer = () => {
   }
 
   return (
-    <div style="z-index:900;" class="fixed rounded-xl bg-base-200 w-full m-2 h-80 p-10 z-50 bottom-10">
+    <div style="z-index:900;" class="fixed rounded-xl bg-base-200 w-full m-2 h-80 p-5 z-50 bottom-1">
       <div class="flex flex-col w-full h-100 rounded-xl text-white place-content-center">
         <div>
           <h2 class="text-2xl">
@@ -115,7 +115,7 @@ const SubsContainer = () => {
                   text-white text-lg text-center"
           >
             <ActiveSubs />
-            <PlaybackDisplay />
+            {/* <PlaybackDisplay /> */}
           </div>
         </div>
       </SubsContextProvider>

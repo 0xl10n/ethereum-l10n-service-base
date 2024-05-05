@@ -12,6 +12,6 @@ export const isCurrentCue = (
 ) => {
   return (
     cue.startTime + CUE_BUFFER >= currentPlaybackS &&
-    currentPlaybackS < cue.endTime - 5
+    currentPlaybackS < cue.endTime
   );
 };

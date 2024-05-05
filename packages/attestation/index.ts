@@ -28,4 +28,5 @@ export {
   Offchain,
   OffchainAttestationVersion,
   SignedOffchainAttestation,
+  zipAndEncodeToBase64,
 } from '@ethereum-attestation-service/eas-sdk';

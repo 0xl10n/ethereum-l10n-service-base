@@ -229,7 +229,7 @@ describe('@api weblate', () => {
       ]);
     });
 
-    test.only('#patchTranslationUnit working', async () => {
+    test('#patchTranslationUnit working', async () => {
       const currentUnit: any = await getTranslationsUnit({ id: 121374334 });
       console.log('current', currentUnit);
 
@@ -316,7 +316,7 @@ describe('@api weblate', () => {
       // note id, id_hash=content_hash, chechksum in url are different
     });
 
-    test.only('#getComponentsTranslations zh-hant', async () => {
+    test('#getComponentsTranslations zh-hant', async () => {
       const results: any = await getComponentsTranslations({
         projectSlug: WEBLATE_PROJECT_SLUG,
         slug: 'transcript',

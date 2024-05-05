@@ -8,7 +8,7 @@ import os from 'os';
 import { createReadStream, createWriteStream } from 'fs';
 
 describe('whisper', () => {
-  test.only('#generateTranscript', { timeout: 1000 * 60 * 5 }, async () => {
+  test('#generateTranscript', { timeout: 1000 * 60 * 5 }, async () => {
     const options = {
       apiKey: process.env.OPENAI_API_KEY!,
     };

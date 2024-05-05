@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Locale, NAME_BY_LOCALE, createSourceStringId, createTranslationStringId } from '@repo/subs';
 import { useWalletContext } from './WalletContext';
 import {
@@ -6,7 +7,8 @@ import {
     TRANSLATION_ATTESTATION_SCHEMA, SCHEMA_REGISTRY_CONTRACT_ADDRESS, EAS_CONTRACT_ADDRESS,
     TRANSLATION_SCHEMA_UID,
     Attestation,
-    SignedOffchainAttestation
+    SignedOffchainAttestation,
+    zipAndEncodeToBase64
 } from '@repo/attestation'
 import { useTranslationContext } from './TranslationContext';
 import { createMemo, createSignal } from 'solid-js';
@@ -17,8 +19,8 @@ export const AttestButtonGroup = () => {
         attestation: null
 
     })
-
-    const sourceId = 'youtube-a';
+    const videoId = 'Ouml0A3UmLY';
+    const sourceId = 'youtube-' + videoId;
 
     const { localeStore } = useTranslationContext()
     const { fromLocale, toLocale } = localeStore
@@ -27,21 +29,25 @@ export const AttestButtonGroup = () => {
 
     const { signer } = useWalletContext();
 
+    // TODO
+    const attestorAddress = '0x11AFe053Cc013c4830Aa3b91EEcb84630ccEc4A8';
+
 
     const { activeCue } = useTranslationContext();
 
-    const attest = (cue: VTTCue, score: number) => {
+    const attest = (cue: VTTCue, score: number, id: number) => {
 
         const attestor = new Attestor(
             signer,
             TRANSLATION_ATTESTATION_SCHEMA,
-            SCHEMA_REGISTRY_CONTRACT_ADDRESS, EAS_CONTRACT_ADDRESS, '0x962EFc5A602f655060ed83BB657Afb6cc4b5883F',
+            SCHEMA_REGISTRY_CONTRACT_ADDRESS, EAS_CONTRACT_ADDRESS, attestorAddress,
             TRANSLATION_SCHEMA_UID
         );
+        const cueId = cue.id || id
         const data = {
             sourceId,
-            sourceStringId: createSourceStringId(sourceId, Locale.En, cue.id),
-            translatedStringId: createTranslationStringId(sourceId, Locale.En, Locale.Zh, cue.id),
+            sourceStringId: createSourceStringId(sourceId, fromLocale, cueId),
+            translatedStringId: createTranslationStringId(sourceId, fromLocale, toLocale, cueId),
             score,
             version: 1
         };
@@ -62,6 +68,14 @@ export const AttestButtonGroup = () => {
 
     }
 
+
+    const encodedAttestation = createMemo(() => {
+        if (store?.attestation?.sig?.uid) {
+            return encodeURIComponent(zipAndEncodeToBase64(store.attestation))
+        }
+        return ''
+    })
+
     const uid = createMemo(() => {
         return (store.attestation?.sig?.uid || '')
     })
@@ -69,17 +83,17 @@ export const AttestButtonGroup = () => {
     return (
         <div class="text-xl" >
             <div class="flex flex-col">
-                <div class="flex flex-row content-center">
+                <div class="flex flex-row content-center items-center pr-3">
                     Translation Id: &nbsp;
-                    <div class="badge badge-primary text-lg px-4">
+                    <div class="badge badge-primary text-sm px-4">
 
                         {createTranslationStringId(sourceId, fromLocale, toLocale, activeCue().id)}
                     </div>
                 </div>
-                <div class="flex flex-row w-full">
-                    <div class="relative mr-5"><button onClick={() => attest(activeCue, 1)}
+                <div class="flex flex-row w-full py-4">
+                    <div class="relative mr-5"><button onClick={() => attest(activeCue, 1, 0)}
                         class="btn btn-outline text-white">🔼 Vote Up</button></div>
-                    <div class="relative ml-5"><button onClick={() => attest(activeCue, -1)}
+                    <div class="relative ml-5"><button onClick={() => attest(activeCue, -1, 0)}
                         class="btn btn-outline text-white">🔽 Vote Down</button></div>
                 </div>
                 <div class="flex flex-row">
@@ -89,9 +103,9 @@ export const AttestButtonGroup = () => {
                                 <div class="relative w-full">
                                     ☑️ Attested
                                     <br />
-                                    {/* <a target="_blank" href={"https://sepolia.easscan.org/attestation/view/" + uid()}> */}
-                                    {uid()}
-                                    {/* </a> */}
+                                    <a target="_blank" href={"https://sepolia.easscan.org/offchain/url/#attestation=" + encodedAttestation()}>
+                                        {_.truncate(uid(), { length: 10 })}
+                                    </a>
 
                                 </div>
                             )

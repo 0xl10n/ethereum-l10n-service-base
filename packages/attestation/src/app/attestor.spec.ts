@@ -25,6 +25,7 @@ import {
   EAS_CONTRACT_ADDRESS,
   SCHEMA_REGISTRY_CONTRACT_ADDRESS,
 } from '../adapters/eas';
+import { zipAndEncodeToBase64 } from '@ethereum-attestation-service/eas-sdk';
 // we will migrate viem once eas sdk eas.connect support so
 // https://github.com/ethereum-attestation-service/eas-sdk/issues/86
 describe('attestation', () => {
@@ -77,6 +78,8 @@ describe('attestation', () => {
     expect((attestation as Attestation).sig.domain.name).toEqual(
       'EAS Attestation',
     );
+    const token = zipAndEncodeToBase64(attestation);
+    expect(token.startsWith('eNq')).toEqual(true);
   });
 
   test('#attest contribution', async () => {
@@ -108,5 +111,8 @@ describe('attestation', () => {
     expect((attestation as Attestation).sig.domain.name).toEqual(
       'EAS Attestation',
     );
+
+    const token = zipAndEncodeToBase64(attestation);
+    expect(token.startsWith('eNq')).toEqual(true);
   });
 });
