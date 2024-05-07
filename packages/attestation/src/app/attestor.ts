@@ -9,7 +9,6 @@ import {
 
 import { ethers } from 'ethers';
 import { Attestation } from '../adapters/eas';
-import {b} from "vitest/dist/reporters-LqC_WI4d";
 
 (BigInt.prototype as any).toJSON = function () {
   // TODO: if the number is too large, it should not be casted as integer
@@ -122,7 +121,7 @@ export default class Attestor {
   }
 
   async verify(attestation: string | Attestation): Promise<boolean> {
-    if (typeof(attestation) === 'string') {
+    if (typeof attestation === 'string') {
       attestation = this.convertStrToAttestation(attestation);
     }
 

@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@ethereum-attestation-service/eas-sdk": "^1.6.0",
+    "@repo/attestation": "workspace:*",
     "viem": "^2.9.23",
     "ethers": "^6.11.1"
   },

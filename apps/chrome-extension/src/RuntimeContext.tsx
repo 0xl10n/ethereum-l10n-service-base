@@ -21,13 +21,16 @@ export const RuntimeContextProvider = (props) => {
     if (chrome.runtime) {
         chrome.runtime.onMessage.addListener(
             function (request, sender, sendResponse) {
-                console.log("Message from the content script:", request);
-                setPlaybackTimeSReceived(request.playbackTimeS);
-                sendResponse({ message: "Roger" });
+
+                if (request?.source === 'portal') {
+                    console.log("Message from the portal script:", request);
+                } else {
+                    console.log("Message from the content script:", request);
+                    setPlaybackTimeSReceived(request.playbackTimeS);
+                    sendResponse({ message: "Roger" });
+                }
             }
         );
-
-
 
     }
 

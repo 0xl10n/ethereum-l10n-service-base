@@ -20,7 +20,6 @@ const getYoutubeTimeWithDocument = (document) => {
 const getYoutubeTime = () => {
 
     return getYoutubeTimeWithDocument(document);
-
 }
 
 export const PlaybackContextProvider = (props) => {

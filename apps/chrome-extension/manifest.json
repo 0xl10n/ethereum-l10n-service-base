@@ -13,6 +13,12 @@
       "js": ["contentscript.mjs"],
       "css": ["style.css"],
       "runAt": "document_end"
+    },
+    {
+      "matches": ["https://*.0xl10n.org/*", "http://localhost:3000/*"],
+      "js": ["portal.mjs"],
+      "css": ["style.css"],
+      "runAt": "document_end"
     }
   ],
   "web_accessible_resources": [
@@ -23,14 +29,8 @@
       ]
     }
   ],
-  "host_permissions": [
-    "http://*/",
-    "https://*/"
-  ],
-  "permissions": [
-    "sidePanel",
-    "scripting"
-  ],
+  "host_permissions": ["http://*/", "https://*/"],
+  "permissions": ["sidePanel", "scripting"],
   "side_panel": {
     "default_path": "sidepanel.html"
   }

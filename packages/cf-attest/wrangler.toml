@@ -1,0 +1,15 @@
+name = "attest"
+main = "src/index.ts"
+route = { pattern = "dev-api.0xl10n.org/*", zone_name = "0xl10n.org" }
+keep_vars = true
+compatibility_date = "2024-05-07"
+
+[env.prd]
+name = "api"
+route = { pattern = "api.0xl10n.org/*", zone_name = "0xl10n.org" }
+
+
+
+kv_namespaces = [
+  { binding = "els-dev", id = "76c8d2ee8ec545889e70688e0fb720c1" }
+]

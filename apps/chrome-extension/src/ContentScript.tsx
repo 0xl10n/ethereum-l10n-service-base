@@ -1,4 +1,3 @@
-console.log('ContentScript.tsx');
 import './index.css'
 import { render } from 'solid-js/web';
 import { ActiveSubs } from './Subs';
