@@ -6,6 +6,7 @@ import {
   OffchainAttestationVersion,
   SignedOffchainAttestation,
 } from '@ethereum-attestation-service/eas-sdk';
+import * as jose from 'jose';
 
 import { ethers, Wallet } from 'ethers';
 
@@ -19,15 +20,32 @@ export interface Env {
   TEST_WALLET_PRIVATE_KEY: string;
   ALCHEMY_API_KEY: string;
   ENVIRONMENT: string;
+  EAS_CONTRACT_ADDRESS: string;
+  SCHEMA_REGISTRY_CONTRACT_ADDRESS: string;
 }
 
 const TRANSLATION_SCHEMA_UID =
   '0xdcf13573c96f6ea7bc355d4a7289bf43db18eb2dac6679e12cb764abcbb264a6';
 
+export type RequestParams = {
+  network: string;
+  recipientAddress: string;
+  attestationData: {
+    sourceId: string;
+    sourceStringId: string;
+    translatedStringId: string;
+    score: number;
+  };
+};
+
 async function handleRequest(request: Request, env: Env) {
-  const url = new URL(request.url);
+  const params = (await request.json()) as RequestParams;
+
+  const { attestationData } = params;
 
   console.log('ENVIRONMENT', env.ENVIRONMENT);
+
+  console.log('EAS_CONTRACT_ADDRESS', env.EAS_CONTRACT_ADDRESS);
 
   const network = 'sepolia';
 
@@ -39,27 +57,14 @@ async function handleRequest(request: Request, env: Env) {
 
   const SCHEMA_REGISTRY_CONTRACT_ADDRESS =
     '0x0a7E2Ff54e76B8E6659aedc9103FB21c038050D0';
-  const eas = new EAS(EAS_CONTRACT_ADDRESS);
-
-  // await attestor.registerSchema();
 
   const recipientAddress = '0x9FaD3583CBa4A1edF511A589f215A87B524D83e7';
-  // const schemaRegistryContractAddress =
-  //   process.env.SCHEMA_REGISTRY_CONTRACT_ADDRESS;
+
   const provider = new ethers.AlchemyProvider(network, apiKey);
 
   const signer = new Wallet(env.TEST_WALLET_PRIVATE_KEY, provider);
-  eas.connect(signer);
-  const offchain = await eas.getOffchain();
 
-  const data = {
-    sourceId: 'youtube-a',
-    sourceStringId: 'string-1',
-    translatedStringId: 'string-2',
-    score: 90,
-  };
-
-  const encodedData = encodeTranslationAttestationSchema(data);
+  const encodedData = encodeTranslationAttestationSchema(attestationData);
 
   const attestor = new Attestor(
     signer,
@@ -75,15 +80,65 @@ async function handleRequest(request: Request, env: Env) {
   return attestation;
 }
 
+const authorize = async (token: string) => {
+  const JWKS = jose.createLocalJWKSet({
+    keys: [
+      {
+        kty: 'EC',
+        x: 'bTNuHA5hl4ou8gchgwNK-phvd8PhYbJ7FWXzIHcayng',
+        y: 'ks0dqrkbFcqrDrwpsnojigAU13HQPEqzJGF5g9rLk2Q',
+        crv: 'P-256',
+        kid: 'a6y70IMm3wqNQivKtApC-ovp1_wH-hfa1pzR03gJ5lo',
+        use: 'sig',
+        alg: 'ES256',
+      },
+      {
+        kty: 'EC',
+        x: 'D6-_lm173okkjbywGlgRFQpE3R5xLC0EIuJVTFp94po',
+        y: 'z9KwY-hgfGwBClNCGsIcp9K7-Iu24koG8NvKSldsqEY',
+        crv: 'P-256',
+        kid: '1C2Djb2HxKxsYnsrL80fobwjl3aieNx2OcrwMMJBziw',
+        use: 'sig',
+        alg: 'ES256',
+      },
+    ],
+  });
+
+  const { payload, protectedHeader } = await jose.jwtVerify(token, JWKS, {
+    issuer: 'privy.io',
+    // app id
+    audience: 'clv8gazq204exi1o8ryjhe3xw',
+  });
+
+  return {
+    payload,
+  };
+};
+
 export default {
   async fetch(
     request: Request,
     env: Env,
     ctx: ExecutionContext,
   ): Promise<Response> {
-    let apiResponse = await handleRequest(request, env);
-    console.log('apiresponse', JSON.stringify(apiResponse));
+    const authorization = request.headers.get('Authorization');
 
-    return new Response(apiResponse.sig.domain?.name as unknown as string, {});
+    console.log('start');
+    // if (!authorization) {
+    //   return new Response('Unauthorized', {
+    //     status: 401,
+    //   });
+    // }
+
+    const token = authorization.replace('Bearer ', '');
+
+    const results = await authorize(token);
+
+    console.log('token', token, results);
+    // let apiResponse = await handleRequest(request, env);
+
+    // console.log('apiresponse', JSON.stringify(apiResponse));
+
+    return new Response(token as unknown as string, {});
   },
 };
