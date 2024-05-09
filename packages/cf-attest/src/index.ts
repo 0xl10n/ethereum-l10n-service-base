@@ -15,6 +15,7 @@ import {
   encodeTranslationAttestationSchema,
   Attestor,
 } from '@repo/attestation';
+import { zipAndEncodeToBase64 } from '../../attestation/index';
 
 export interface Env {
   TEST_WALLET_PRIVATE_KEY: string;
@@ -111,6 +112,7 @@ const authorize = async (token: string) => {
   });
 
   return {
+    isVerified: payload?.iss,
     payload,
   };
 };
@@ -123,22 +125,31 @@ export default {
   ): Promise<Response> {
     const authorization = request.headers.get('Authorization');
 
-    console.log('start');
-    // if (!authorization) {
-    //   return new Response('Unauthorized', {
-    //     status: 401,
-    //   });
-    // }
+    const token = (authorization || '').replace('Bearer ', '');
 
-    const token = authorization.replace('Bearer ', '');
+    try {
+      if (!token) {
+        throw new Error('Unauthorized');
+      }
+      const { payload, isVerified } = await authorize(token);
 
-    const results = await authorize(token);
+      console.log('token', token);
 
-    console.log('token', token, results);
-    // let apiResponse = await handleRequest(request, env);
+      if (!isVerified) {
+        throw new Error('Unauthorized');
+      }
+    } catch (err) {
+      return new Response('Unauthorized', {
+        status: 401,
+      });
+    }
 
-    // console.log('apiresponse', JSON.stringify(apiResponse));
+    let attestation = await handleRequest(request, env);
 
-    return new Response(token as unknown as string, {});
+    const attestationToken = zipAndEncodeToBase64(attestation);
+
+    // console.log('apiresponse', JSON.stringify(attestationToken));
+
+    return new Response({ attestationToken } as unknown as string, {});
   },
 };
