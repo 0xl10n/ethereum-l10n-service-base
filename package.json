@@ -6,6 +6,7 @@
     "test": "turbo test",
     "dev": "turbo dev",
     "lint": "turbo lint",
+    "scrape": "turbo scrape",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {

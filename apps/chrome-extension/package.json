@@ -6,9 +6,10 @@
     "start": "vite",
     "test": "vitest",
     "dev": "vite --config vite.ext.config.ts",
+    "build:site-l10n": "vite --config vite.site-l10n.config.ts build",
     "build:ext": "vite --config vite.ext.config.ts build",
     "build:cs": "vite --config vite.cs.config.ts  build",
-    "build": "pnpm run build:ext && pnpm run build:cs && cp -R dist-cs/* dist/ && cp -R dist-ext/* dist/ && cp manifest.json dist/",
+    "build": "pnpm run build:ext && pnpm run build:cs && pnpm run build:site-l10n && cp -R dist-site-l10n/* dist/ && cp -R dist-cs/* dist/ && cp -R dist-ext/* dist/ && cp manifest.json dist/",
     "serve": "vite preview"
   },
   "license": "MIT",
