@@ -26,9 +26,6 @@ export const RuntimeContextProvider = (props) => {
                 sendResponse({ message: "Roger" });
             }
         );
-
-
-
     }
 
 

@@ -16,6 +16,12 @@ const demoWalletPrivateKey = '0x3db76cdd104b07bebf2221076fab7485c03b59f5af253224
  * in future we will delegate to lit action to sign for EAS Lit.Actions.signEcdsa
  */
 
+const loadSession = () => {
+    // chrome.storage.sync.get({ 'foo': 'hello', 'bar': 'hi' }, function () {
+    //     console.log('Settings saved');
+    // });
+}
+
 
 
 
@@ -41,6 +47,17 @@ export const WalletContextProvider = (props) => {
         const { chainId } = await provider.getNetwork()
         setChainId(Number(chainId))
     })
+
+
+    // get auth update from RuntimeContext
+
+
+    // storage for auth
+    // Save it using the Chrome extension storage API.
+    // chrome.storage.sync.set({ 'foo': 'hello', 'bar': 'hi' }, function () {
+    //     console.log('Settings saved');
+    // });
+
 
 
 

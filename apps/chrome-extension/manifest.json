@@ -15,7 +15,7 @@
       "runAt": "document_end"
     },
     {
-      "matches": ["https://*.attest.org/*"],
+      "matches": ["https://*"],
       "js": ["site-l10n.mjs"],
       "css": ["style.css"],
       "runAt": "document_end"

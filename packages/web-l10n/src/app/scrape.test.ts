@@ -9,6 +9,8 @@ describe('scrape', () => {
 
     fs.writeFileSync('scrape.html', html || '');
     console.log('texts', texts);
+
+    fs.writeFileSync('scrape.txt', texts.join('<EOE>') || '');
     expect(html).toEqual(123);
   });
 });

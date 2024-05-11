@@ -92,9 +92,9 @@ export const AttestButtonGroup = () => {
                 </div>
                 <div class="flex flex-row w-full py-4">
                     <div class="relative mr-5"><button onClick={() => attest(activeCue, 1, 0)}
-                        class="btn btn-outline text-white">🔼 Vote Up</button></div>
+                        class="btn btn-outline text-white">👍</button></div>
                     <div class="relative ml-5"><button onClick={() => attest(activeCue, -1, 0)}
-                        class="btn btn-outline text-white">🔽 Vote Down</button></div>
+                        class="btn btn-outline text-white">👎</button></div>
                 </div>
                 <div class="flex flex-row">
                     <div >

@@ -1,10 +1,13 @@
 console.log('ContentScript.tsx');
+import { request, gql } from 'graphql-request'
 import './index.css'
 import { render } from 'solid-js/web';
 import { ActiveSubs } from './Subs';
 import { PlaybackContextProvider, usePlaybackContext } from './PlaybackContext';
 import { SubsContextProvider, SubsContextArgs, useSubsContext } from './SubsContext';
 import { Locale, createTranscriptFileName } from '@repo/subs';
+import { useQuery } from '@tanstack/react-query'
+
 
 const PlaybackDisplay = () => {
   const [currentPlaybackS] = usePlaybackContext();
@@ -32,6 +35,45 @@ chrome.runtime.onMessage.addListener(
     }
   }
 );
+
+
+interface AttestationsQuery {
+  attestations: {
+    id: string
+    title: string
+    to: string
+  }[]
+}
+
+
+const attestationsQueryDocument = gql`
+  query Attestations {
+    attestations {
+      id
+      title
+      author {
+        id
+        firstName
+        lastName
+      }
+    }
+  }
+`
+
+const AttestationContainer = () => {
+  const url = ''
+  const { data } = useQuery<AttestationsQuery>('attestations', async () => {
+    const { posts } = await request(url, attestationsQueryDocument)
+    return posts
+  })
+
+
+  return (
+    <div>
+      results
+    </div>
+  )
+}
 
 const SuggestionContainer = () => {
   const submitSuggestion = async () => {
@@ -151,8 +193,6 @@ document.onreadystatechange = () => {
       console.log('container ytd', container);
       // const notificationText = document.createElement('p');
 
-
-
       const parentContainer = document.getElementsByClassName('ytd-player')?.[0] as HTMLElement;
       // create offset so subs can float on top
       // on parent as video will take full of container
@@ -167,6 +207,8 @@ document.onreadystatechange = () => {
       const body = document.querySelector('body');
 
       render(() => <SuggestionContainer />, body!);
+
+      render(() => <AttestationContainer />, body!);
 
 
       // window.chrome.sidePanel.setOptions({
