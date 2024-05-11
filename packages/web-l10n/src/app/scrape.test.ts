@@ -1,10 +1,14 @@
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { scrape } from './scape';
+import fs from 'fs';
 
 describe('scrape', () => {
-  test('#attest translations', async () => {
-    const body = await scrape();
+  test('#scrape body', async () => {
+    const url = 'https://docs.attest.org/docs/welcome';
+    const { texts, html } = await scrape(url);
 
-    expect(body).toEqual(123);
+    fs.writeFileSync('scrape.html', html || '');
+    console.log('texts', texts);
+    expect(html).toEqual(123);
   });
 });

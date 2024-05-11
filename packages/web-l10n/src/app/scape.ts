@@ -2,17 +2,25 @@ import playwright from 'playwright';
 import cheerio from 'cheerio';
 import { gotScraping } from 'got-scraping';
 
-export const scrape = async () => {
+export const scrape = async (url: string) => {
   const browser = await playwright.firefox.launch({
     headless: true,
   });
   const page = await browser.newPage();
-  await page.goto('https://docs.attest.org/docs/welcome');
+  await page.goto(url);
   const html = await page.evaluate(() => document.body.innerHTML); // Save the page's HTML to a variable
 
   const $ = cheerio.load(html); // Use Cheerio to load the page's HTML code
 
   const body = $('body');
+
+  // const text = body.text();
+  const texts: any[] = [];
+  $('a,p,h1,h2,h3,h4,h5').each(function (index, element) {
+    // collectedText += element.innerText + " ";
+    console.log('i', index, $(element).text());
+    texts.push($(element).text());
+  });
 
   // // Continue writing your scraper using Cheerio's jQuery syntax
   // const phone = {
@@ -28,8 +36,14 @@ export const scrape = async () => {
   // };
 
   // console.log(phone);
+
   await browser.close();
-  return body.html();
+
+  return {
+    texts,
+    body,
+    html: body.html(),
+  };
 };
 
 // return gotScraping.get({

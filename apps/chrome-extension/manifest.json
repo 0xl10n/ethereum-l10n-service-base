@@ -13,6 +13,12 @@
       "js": ["contentscript.mjs"],
       "css": ["style.css"],
       "runAt": "document_end"
+    },
+    {
+      "matches": ["https://*.attest.org/*"],
+      "js": ["site-l10n.mjs"],
+      "css": ["style.css"],
+      "runAt": "document_end"
     }
   ],
   "web_accessible_resources": [
@@ -23,14 +29,8 @@
       ]
     }
   ],
-  "host_permissions": [
-    "http://*/",
-    "https://*/"
-  ],
-  "permissions": [
-    "sidePanel",
-    "scripting"
-  ],
+  "host_permissions": ["http://*/", "https://*/"],
+  "permissions": ["sidePanel", "scripting"],
   "side_panel": {
     "default_path": "sidepanel.html"
   }

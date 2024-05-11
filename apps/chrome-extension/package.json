@@ -27,6 +27,7 @@
     "@lit-protocol/lit-node-client": "^5.0.0",
     "@repo/attestation": "workspace:*",
     "@repo/subs": "workspace:*",
+    "build": "^0.1.4",
     "daisyui": "4.10.2",
     "ethers": "^6.11.1",
     "jsdom": "^24.0.0",
