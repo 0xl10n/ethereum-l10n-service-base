@@ -5,9 +5,6 @@ This repository contains packages of
 - end-user can make use of rendered subtitles at translated videos on youtube, streamETH
 - end-user & attestors can attest translations
 
-### Subs
-
--
 
 ### EAS Schemas
 2 schems
@@ -15,7 +12,8 @@ This repository contains packages of
 2. project attestation on contribution/allocation
 
 
-
+## Ceramic
+- env-cmd pnpm run --filter attestation ceramic:api  
 
 ### contracts (Customized Allo strategy)
 
