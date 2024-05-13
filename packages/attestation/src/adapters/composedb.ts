@@ -30,7 +30,7 @@ export const getServerClient = async () => {
   const did = await authenticate();
   const compose = new ComposeClient({
     ceramic: 'http://localhost:7007',
-    definition,
+    definition: definition as any,
   });
 
   compose.setDID(did);

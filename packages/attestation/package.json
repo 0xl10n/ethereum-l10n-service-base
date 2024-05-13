@@ -5,8 +5,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "dev": "rm -rf dist && tsc --watch",
-    "ceramic:generate": "node scripts/composites.mjs",
-    "ceramic:api": "node scripts/graphql.mjs",
+    "ceramic:generate": "rm -rf src/__generated__ && node src/scripts/composites.mjs",
+    "ceramic:api": "pnpm run ceramic:generate && node src/scripts/graphql.mjs",
     "test": "vitest"
   },
   "exports": {

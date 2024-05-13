@@ -24,7 +24,7 @@ export const writeComposite = async () => {
 
     const composite = await createComposite(
         ceramic,
-        "./composites/all.graphql"
+        "./src/app/composites/all.graphql"
     );
 
     await writeEncodedComposite(composite, "./src/__generated__/definition.json");

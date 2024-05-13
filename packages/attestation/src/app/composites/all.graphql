@@ -1,15 +1,24 @@
-type Attestation @createModel(
+## Face issue where old model seems get stuck even after ceramic db deleted
+## potentially resolve by new model name
+type TranslationAttestation @createModel(
     accountRelation: LIST
     description: "A simple attestation record model"
   )
   @createIndex(fields: [{ path: ["attestor"] }])
   @createIndex(fields: [{ path: ["recipient"] }])
+  @createIndex(fields: [{ path: ["uid"] }])
 {
   attestor: String! @string(minLength: 3, maxLength: 42)
-  recipient: String @string(minLength: 3, maxLength: 42)
-  
-  # publisher: DID! @documentAccount 
-  # uid: String! @string(minLength: 66, maxLength: 66)
+  recipient: String @string(minLength: 3, maxLength: 42) 
+  uid: String @string(minLength: 3, maxLength: 66)
+
+  sourceStringId: String @string(minLength: 3, maxLength: 66)
+  translatedStringId: String @string(minLength: 3, maxLength: 66)
+  time: DateTime 
+}
+
+
+# publisher: DID! @documentAccount 
   # schema: String! @string(minLength: 66, maxLength: 66)
   # attester: String! @string(minLength: 42, maxLength: 42)
   # verifyingContract: String! @string(minLength: 42, maxLength: 42)
@@ -23,10 +32,8 @@ type Attestation @createModel(
   # expirationTime: DateTime
   # revocationTime: DateTime
   # refUID: String @string(minLength: 66, maxLength: 66)
-  # time: Int! 
-  # data: String! @string(maxLength: 1000000)
-}
 
+  # data: String! @string(maxLength: 1000000)
 type Types {
   name: String! @string(maxLength: 20)
   type: String! @string(maxLength: 20)

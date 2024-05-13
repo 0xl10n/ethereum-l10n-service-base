@@ -15,6 +15,28 @@ export const ATTESTATION_QUERY = gql`
       ... on Attestation {
         attestor
         recipient
+        # sourceStringId
+        # translatedStringId
+        # score
+        # time
+      }
+    }
+
+    viewer {
+      id
+    }
+  }
+`;
+export const TRANSLATION_ATTESTATION_QUERY = gql`
+  query TranslationAttestation($id: ID!) {
+    node(id: $id) {
+      ... on TranslationAttestation {
+        attestor
+        recipient
+        sourceStringId
+        translatedStringId
+
+        time
       }
     }
 
@@ -26,11 +48,11 @@ export const ATTESTATION_QUERY = gql`
 
 export const ATTESTATION_MUTATION = gql`
   mutation CreateAttestation(
-    $content: AttestationInput!
+    $content: TranslationAttestationInput!
     $options: CreateOptionsInput
     $clientMutationId: String
   ) {
-    createAttestation(
+    createTranslationAttestation(
       input: {
         content: $content
         options: $options
@@ -62,20 +84,31 @@ export const querySmoke = async (): Promise<any> => {
 };
 export const queryAttestation = async (id: string): Promise<any> => {
   const client = await getServerClient();
-  return await client.executeQuery(ATTESTATION_QUERY, { id });
+  return await client.executeQuery(TRANSLATION_ATTESTATION_QUERY, { id });
 };
 
+// TODO derive type from graphql
 export type AttestationInput = {
   attestor: string;
   recipient: string;
+  sourceId: string;
+  sourceStringId: string;
+  translatedStringId: string;
+  score: number;
+  time: Date;
+  uid: string;
+  data: string;
 };
 
 export const createAttestation = async (
-  input: AttestationInput,
+  input: Partial<AttestationInput>,
 ): Promise<any> => {
   const client = await getServerClient();
   return await client.executeQuery(ATTESTATION_MUTATION, {
-    content: input,
+    content: {
+      ...input,
+      time: input.time.toISOString(),
+    },
     // options: {},
     // clientMutationid: '1',
   });

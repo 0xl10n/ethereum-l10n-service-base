@@ -64,10 +64,7 @@ export const AttestButtonGroup = () => {
                 })
 
             })
-
-
     }
-
 
     const encodedAttestation = createMemo(() => {
         if (store?.attestation?.sig?.uid) {
@@ -86,7 +83,6 @@ export const AttestButtonGroup = () => {
                 <div class="flex flex-row content-center items-center pr-3">
                     Translation Id: &nbsp;
                     <div class="badge badge-primary text-sm px-4">
-
                         {createTranslationStringId(sourceId, fromLocale, toLocale, activeCue().id)}
                     </div>
                 </div>
@@ -100,13 +96,14 @@ export const AttestButtonGroup = () => {
                     <div >
                         {
                             store.attestation && (
-                                <div class="relative w-full">
-                                    ☑️ Attested
-                                    <br />
-                                    <a target="_blank" href={"https://sepolia.easscan.org/offchain/url/#attestation=" + encodedAttestation()}>
-                                        {_.truncate(uid(), { length: 10 })}
-                                    </a>
-
+                                <div class="toast toast-end">
+                                    <div class="alert alert-success relative w-full mb-10">
+                                        ☑️ Attested
+                                        <br />
+                                        <a target="_blank" href={"https://sepolia.easscan.org/offchain/url/#attestation=" + encodedAttestation()}>
+                                            {_.truncate(uid(), { length: 10 })}
+                                        </a>
+                                    </div>
                                 </div>
                             )
                         }
