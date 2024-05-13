@@ -1,0 +1,2 @@
+// This is an auto-generated file, do not edit manually
+export const definition = {"models":{"Attestation":{"interface":false,"implements":[],"id":"kjzl6hvfrbw6c8q8trtv9ub5cezrtblsgsf2okeqhxxt2ht1kids77nk4p34fbd","accountRelation":{"type":"list"}}},"objects":{"Attestation":{"attestor":{"type":"string","required":true,"immutable":false,"indexed":true},"recipient":{"type":"string","required":false,"immutable":false,"indexed":true}}},"enums":{},"accountData":{"attestationList":{"type":"connection","name":"Attestation"}}}

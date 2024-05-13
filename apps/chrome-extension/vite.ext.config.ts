@@ -13,19 +13,14 @@ const build = {
     formats: ['es'],
   },
   rollupOptions: {
-    // output: {
-    //   inlineDynamicImports: true,
-    // }
+    output: {
+      assetFileNames: (assetInfo) => {
+        if (assetInfo.name === 'style.css') return 'ext.css';
+        return assetInfo.name;
+      },
+      //   inlineDynamicImports: true,
+    },
   },
 };
 
-const plugins = [
-  nodePolyfills({
-    globals: {
-      Buffer: true, // can also be 'build', 'dev', or false
-      global: true,
-      process: true,
-    },
-  }),
-];
-export default createConfig(build, plugins);
+export default createConfig(build);

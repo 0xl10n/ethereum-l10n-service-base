@@ -30,3 +30,5 @@ export {
   SignedOffchainAttestation,
   zipAndEncodeToBase64,
 } from '@ethereum-attestation-service/eas-sdk';
+
+export * from './src/app/graphql/attestation';

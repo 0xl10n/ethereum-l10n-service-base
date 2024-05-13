@@ -8,7 +8,7 @@
     "dev": "vite --config vite.ext.config.ts",
     "build:site-l10n": "vite --config vite.site-l10n.config.ts build",
     "build:ext": "vite --config vite.ext.config.ts build",
-    "build:cs": "vite --config vite.cs.config.ts  build",
+    "build:cs": "vite --config vite.cs.config.ts build",
     "build": "pnpm run build:ext && pnpm run build:cs && pnpm run build:site-l10n && cp -R dist-site-l10n/* dist/ && cp -R dist-cs/* dist/ && cp -R dist-ext/* dist/ && cp manifest.json dist/",
     "serve": "vite preview"
   },
@@ -27,7 +27,7 @@
     "@lit-protocol/lit-node-client": "^5.0.0",
     "@repo/attestation": "workspace:*",
     "@repo/subs": "workspace:*",
-    "@tanstack/react-query": "^5.36.0",
+    "@tanstack/solid-query": "^5.36.0",
     "build": "^0.1.4",
     "daisyui": "4.10.2",
     "ethers": "^6.11.1",

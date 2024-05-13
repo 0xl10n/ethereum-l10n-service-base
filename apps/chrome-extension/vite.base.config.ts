@@ -1,7 +1,18 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import solidPlugin from 'vite-plugin-solid';
 // import devtools from 'solid-devtools/vite';
+
+const DEFAULT_PLUGINS = [
+  nodePolyfills({
+    globals: {
+      Buffer: true, // can also be 'build', 'dev', or false
+      global: true,
+      process: true,
+    },
+  }),
+];
 
 export const createConfig = (build, plugins = []) =>
   defineConfig({
@@ -12,6 +23,7 @@ export const createConfig = (build, plugins = []) =>
     */
       // devtools(),
       solidPlugin(),
+      ...DEFAULT_PLUGINS,
       ...plugins,
     ],
     server: {

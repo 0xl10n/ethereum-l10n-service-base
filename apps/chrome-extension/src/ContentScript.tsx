@@ -3,11 +3,15 @@ import { request, gql } from 'graphql-request'
 import './index.css'
 import { render } from 'solid-js/web';
 import { ActiveSubs } from './Subs';
+import { QueryClient, QueryClientProvider, createMutation, createQuery } from '@tanstack/solid-query';
+
 import { PlaybackContextProvider, usePlaybackContext } from './PlaybackContext';
 import { SubsContextProvider, SubsContextArgs, useSubsContext } from './SubsContext';
 import { Locale, createTranscriptFileName } from '@repo/subs';
-import { useQuery } from '@tanstack/react-query'
+import { ATTESTATION_QUERY } from '@repo/attestation';
 
+
+const GRAPHQL_ENDPOINT = 'localhost:5005/graphql'
 
 const PlaybackDisplay = () => {
   const [currentPlaybackS] = usePlaybackContext();
@@ -37,41 +41,57 @@ chrome.runtime.onMessage.addListener(
 );
 
 
-interface AttestationsQuery {
-  attestations: {
-    id: string
-    title: string
-    to: string
-  }[]
-}
 
 
-const attestationsQueryDocument = gql`
-  query Attestations {
-    attestations {
-      id
-      title
-      author {
-        id
-        firstName
-        lastName
-      }
-    }
+const AttestationListContainer = () => {
+
+  const uploadAttest = async () => {
+    console.log('upload attestation')
+
+    createMutation(() => ({
+      mutationFn: async () => {
+        const result = await request(GRAPHQL_ENDPOINT)
+        if (!result.ok) throw new Error('Failed to fetch data')
+        return result.json()
+      },
+    }))
+
   }
-`
 
-const AttestationContainer = () => {
-  const url = ''
-  const { data } = useQuery<AttestationsQuery>('attestations', async () => {
-    const { posts } = await request(url, attestationsQueryDocument)
-    return posts
-  })
+  const { data } = createQuery(() => ({
+    queryKey: ['queryAttestations'],
+    queryFn: async () => {
+      const result = await request(GRAPHQL_ENDPOINT, ATTESTATION_QUERY)
+      if (!result.ok) throw new Error('Failed to fetch data')
+      return result.json()
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    throwOnError: true, // Throw an error if the query fails
+  }))
 
+  console.log('data', data)
 
   return (
     <div>
+      <div onClick={async () => {
+        await uploadAttest();
+      }}>
+        add
+      </div>
       results
-    </div>
+    </div >
+  )
+
+}
+
+const AttestationContainer = () => {
+  const queryClient = new QueryClient();
+
+
+  return (
+    <QueryClientProvider queryClient={queryClient}>
+      <AttestationListContainer />
+    </QueryClientProvider>
   )
 }
 

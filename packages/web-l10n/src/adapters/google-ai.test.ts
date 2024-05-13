@@ -5,7 +5,7 @@ import { easContent, easTxt, easDoc } from './site.fixture';
 import { createPrompt } from '../app/prompt';
 
 describe('google', () => {
-  test.only('#generate, easDoc', async () => {
+  test('#generate, easDoc', async () => {
     const body = easDoc;
 
     const text = easTxt;

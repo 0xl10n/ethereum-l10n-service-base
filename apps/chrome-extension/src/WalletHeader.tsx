@@ -31,7 +31,7 @@ const ProfileButton = () => {
     )
     return (
 
-        <a href="https://0xl10n.org/portal" target='_blank' class="btn btn-ghost">
+        <a href="https://0xl10n.org/portal/login" target='_blank' class="btn btn-ghost">
             <button>Connect</button>
         </a>
 

@@ -14,6 +14,10 @@ const build = {
   },
   rollupOptions: {
     output: {
+      assetFileNames: (assetInfo) => {
+        if (assetInfo.name === 'style.css') return 'cs.css';
+        return assetInfo.name;
+      },
       inlineDynamicImports: true,
     },
   },
