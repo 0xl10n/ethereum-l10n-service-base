@@ -1,10 +1,7 @@
 import tmp from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { generateTranscript } from './openai-whisper.ts';
-import { createAudioStreamWithYtVideo } from './youtube.ts';
 import { createAudioFileName, getFile } from '../domain/key.ts';
-import path from 'path';
-import os from 'os';
 import { createReadStream, createWriteStream } from 'fs';
 
 describe('whisper', () => {
@@ -12,7 +9,7 @@ describe('whisper', () => {
     const options = {
       apiKey: process.env.OPENAI_API_KEY!,
     };
-    const videoId = 'I9XLN52xWMk';
+    const videoId = 'RsIBqExwsT8';
     const fileName = createAudioFileName('youtube', videoId);
     const filePath = getFile(fileName);
     console.log('filePath', filePath);

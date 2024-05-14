@@ -24,7 +24,7 @@ document.onreadystatechange = () => {
                     const content = inputs["zh_TW"][selector]
                     console.log('content', content)
                     // Iterate through each element and modify its content
-
+                    console.log('elements', elements?.length)
                     // TODO keep style tags like <strong>
                     elements.forEach((element) => {
                         // Update inner content

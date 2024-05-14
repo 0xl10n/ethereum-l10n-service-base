@@ -23,6 +23,7 @@
     "lodash": "^4.17.21",
     "openai": "^4.33.1",
     "playwright": "^1.44.0",
+    "@repo/translate": "workspace:*",
     "vite": "^5.0.11",
     "vite-plugin-node-polyfills": "^0.21.0"
   },

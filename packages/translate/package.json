@@ -1,5 +1,5 @@
 {
-  "name": "@repo/subs",
+  "name": "@repo/translate",
   "version": "0.0.0",
   "description": "",
   "type": "module",
@@ -15,8 +15,6 @@
     "vitest": "^1.5.0"
   },
   "dependencies": {
-    "@lighthouse-web3/kavach": "^0.1.5",
-    "@lighthouse-web3/sdk": "^0.3.0",
     "@types/lodash": "^4.17.0",
     "@types/tmp": "^0.2.6",
     "fluent-ffmpeg": "^2.1.2",
@@ -26,13 +24,11 @@
     "rxjs": "^7.8.1",
     "solid-js": "^1.8.11",
     "tmp": "^0.2.3",
-    "videojs-vtt.js": "^0.15.5",
     "viem": "^2.9.6",
     "vite": "^5.0.11",
     "vite-plugin-node-polyfills": "^0.21.0",
     "xstate": "^5.11.0",
     "@google/generative-ai": "^0.11.1",
-    "@repo/translate": "workspace:*",
     "youtube-dl-exec": "^3.0.0",
     "youtubei": "^1.4.0"
   }

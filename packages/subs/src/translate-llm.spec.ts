@@ -7,6 +7,6 @@ describe('#translate', () => {
     const fixture = VTT_WHISPER_EN;
     const results = await translate(fixture);
 
-    console.log(results);
+    console.log('translate', results);
   });
 });

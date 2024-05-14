@@ -14,6 +14,7 @@ describe('google', () => {
 
     const content = await generate(prompt);
 
+    const results = content.replace('```json', '').replace('```', '');
     console.log(content);
 
     // expect(_.keys(JSON.parse(content)['en']).length > 0).toEqual(true);

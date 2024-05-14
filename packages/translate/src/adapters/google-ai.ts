@@ -48,5 +48,5 @@ export const generate = async (prompt: string) => {
 
   const output = response.text();
 
-  return (output || '').replace('```json', '').replace('```', '');
+  return output || '';
 };

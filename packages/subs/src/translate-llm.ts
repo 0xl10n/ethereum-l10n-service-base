@@ -10,6 +10,7 @@ import {
   take,
   toArray,
 } from 'rxjs/operators';
+import { generate } from '@repo/translate';
 
 const openai = new OpenAI({
   apiKey: process.env['OPENAI_API_KEY'], // This is the default and can be omitted
@@ -27,15 +28,19 @@ Convert below asr engine output into VTT format
  })}
 `;
 
+// export const translate = async (input: string) => {
+//   const output = await openai.chat.completions.create({
+//     model: 'gpt-4',
+//     messages: [{ role: 'user', content: createPrompt(input) }],
+//     stream: false,
+//   });
+
+//   console.log(JSON.stringify(output, null, 4));
+
+//   const result = output?.choices?.[0]?.message?.content;
+//   return result;
+// };
+
 export const translate = async (input: string) => {
-  const output = await openai.chat.completions.create({
-    model: 'gpt-4',
-    messages: [{ role: 'user', content: createPrompt(input) }],
-    stream: false,
-  });
-
-  console.log(JSON.stringify(output, null, 4));
-
-  const result = output?.choices?.[0]?.message?.content;
-  return result;
+  return await generate(createPrompt(input));
 };

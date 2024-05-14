@@ -11,6 +11,6 @@ describe('scrape', () => {
     console.log('texts', texts);
 
     fs.writeFileSync('scrape.txt', texts.join('<EOE>') || '');
-    expect(html).toEqual(123);
+    expect(!!html?.match(/div/)).toEqual(true);
   });
 });

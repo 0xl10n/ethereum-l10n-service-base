@@ -11,6 +11,7 @@ import path from 'path';
 import { createAudioStreamWithYtVideo } from './adapters/youtube.ts';
 import { PipelineOptions } from './domain/pipeline-options.ts';
 import { generateTranscript } from './adapters/openai-whisper.ts';
+
 import {
   createAudioFileName,
   createTranscriptFileName,
@@ -19,6 +20,7 @@ import {
 } from './domain/key.ts';
 import { Transcription } from 'openai/resources/audio/transcriptions.mjs';
 import { Locale } from './domain/locale.ts';
+import { translate } from './translate-llm.js';
 const pipeline = promisify(stream.pipeline);
 
 /**
@@ -34,16 +36,26 @@ export const generateTranscriptWithYtVideo = (
   const fileName = getFile(createAudioFileName(prefix, videoId));
 
   return of(fs.existsSync(fileName)).pipe(
-    mergeMap((isExists) => {
+    map((isExists) => {
       if (isExists) {
         return createReadStream(fileName);
       }
       return createAudioStreamWithYtVideo(videoId);
     }),
+
     mergeMap((stream) => generateTranscript(stream, options)),
-    map((transcript) =>
-      persistTranscript(prefix, videoId, 'els-whisper', 'zh-TW', transcript),
-    ),
+    mergeMap(async (transcript) => {
+      const transcriptZhTW = await translate(transcript as any as string);
+      console.log('transcriptZhTW', transcriptZhTW);
+      persistTranscript(
+        prefix,
+        videoId,
+        'els-whisper',
+        'zh_TW',
+        transcriptZhTW,
+      );
+      persistTranscript(prefix, videoId, 'els-whisper', 'en', transcript);
+    }),
   );
 };
 
@@ -63,10 +75,14 @@ export const persistTranscript = (
   toLocale: string,
   transcript: Transcription,
 ) => {
-  const key = createTranslationWithLocalePairs(videoId, by, 'en', toLocale);
+  const key = createTranslationWithLocalePairs(videoId, 'en', toLocale, by);
   console.log('persisting transcript to', key, transcript);
 
-  const fileName = createTranscriptFileName('youtube', videoId, Locale.ZhTw);
+  const fileName = createTranscriptFileName(
+    'youtube',
+    videoId,
+    toLocale as Locale,
+  );
   const filePath = getFile(fileName);
   fs.writeFileSync(filePath, transcript as unknown as string);
   return key;
