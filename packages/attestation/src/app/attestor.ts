@@ -63,7 +63,10 @@ export default class Attestor {
     console.log('attesting translation onchain');
     const EASContractAddress = this.easContractAddress;
 
-    const eas = new EAS(EASContractAddress);
+    const eas = new EAS(EASContractAddress, {
+      signer: this.signer,
+      version: '1.2.1',
+    });
     eas.connect(this.signer);
 
     const tx = await eas.attest({
@@ -86,7 +89,8 @@ export default class Attestor {
     refUID: string = '0x0000000000000000000000000000000000000000000000000000000000000000',
   ): Promise<Attestation> {
     const EASContractAddress = this.easContractAddress;
-    const eas = new EAS(EASContractAddress);
+    // https://github.com/ethereum-attestation-service/eas-sdk/issues/88
+    const eas = new EAS(EASContractAddress, { signer: this.signer });
     eas.connect(this.signer);
     const offchain = await eas.getOffchain();
 

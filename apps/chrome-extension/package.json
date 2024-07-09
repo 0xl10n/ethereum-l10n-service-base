@@ -23,6 +23,7 @@
     "vite-plugin-solid": "^2.8.2"
   },
   "dependencies": {
+    "@coinbase/wallet-sdk": "^4.0.4",
     "@lit-protocol/contracts-sdk": "^5.0.0",
     "@lit-protocol/lit-node-client": "^5.0.0",
     "@repo/attestation": "workspace:*",

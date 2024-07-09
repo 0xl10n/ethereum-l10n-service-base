@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@ethereum-attestation-service/eas-sdk": "^1.6.0",
+    "@ethereum-attestation-service/eas-sdk": "^2.4.0",
     "@lighthouse-web3/kavach": "^0.1.5",
     "@lighthouse-web3/sdk": "^0.3.0",
     "@nestjs/common": "^10.0.0",

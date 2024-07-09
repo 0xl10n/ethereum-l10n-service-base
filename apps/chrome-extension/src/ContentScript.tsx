@@ -8,7 +8,14 @@ import { QueryClient, QueryClientProvider, createMutation, createQuery } from '@
 import { PlaybackContextProvider, usePlaybackContext } from './PlaybackContext';
 import { SubsContextProvider, SubsContextArgs, useSubsContext } from './SubsContext';
 import { Locale, createTranscriptFileName } from '@repo/subs';
-import { ATTESTATION_QUERY } from '@repo/attestation';
+import {
+  ATTESTATION_QUERY,
+  Attestor,
+  TRANSLATION_ATTESTATION_SCHEMA,
+  TRANSLATION_SCHEMA_UID,
+  encodeTranslationAttestationSchema,
+} from '@repo/attestation';
+
 
 
 const GRAPHQL_ENDPOINT = 'localhost:5005/graphql'
@@ -46,15 +53,47 @@ chrome.runtime.onMessage.addListener(
 const AttestationListContainer = () => {
 
   const uploadAttest = async () => {
-    console.log('upload attestation')
+    console.log('upload attestation');
+    // const provider = coinbaseSdk.makeWeb3Provider({ options: 'smartWalletOnly' });
 
-    createMutation(() => ({
-      mutationFn: async () => {
-        const result = await request(GRAPHQL_ENDPOINT)
-        if (!result.ok) throw new Error('Failed to fetch data')
-        return result.json()
-      },
-    }))
+    // const data = {
+    //   sourceId: 'youtube-a',
+    //   sourceStringId: 'string-1',
+    //   translatedStringId: 'string-2',
+    //   score: 90,
+    // };
+
+    // // Use provider
+    // const addresses = provider.request({ method: 'eth_requestAccounts' });
+
+    // console.log('coinbase', addresses)
+
+    // const signer = (provider as unknown as BrowserProvider).getSigner();
+    // const schemaUid = TRANSLATION_SCHEMA_UID;
+
+    // const recipientAddress = '0x7A53d4B412D32aAcF5839CE249f3141312a4B13B';
+
+    // const schemaRegistryContractAddress = '0x0a7E2Ff54e76B8E6659aedc9103FB21c038050D0';
+    // const easContractAddress = '0xC2679fBD37d54388Ce493F1DB75320D236e1815e';
+
+    // const encodedData = encodeTranslationAttestationSchema(data);
+
+    // const attestor = new Attestor(
+    //   provider,
+    //   TRANSLATION_ATTESTATION_SCHEMA,
+    //   schemaRegistryContractAddress,
+    //   easContractAddress,
+    //   recipientAddress,
+    //   schemaUid,
+    // );
+
+    // createMutation(() => ({
+    //   mutationFn: async () => {
+    //     const result = await request(GRAPHQL_ENDPOINT)
+    //     if (!result.ok) throw new Error('Failed to fetch data')
+    //     return result.json()
+    //   },
+    // }))
 
   }
 
@@ -236,5 +275,14 @@ document.onreadystatechange = () => {
       //     enabled: true
       //   });
     }, 2000);
+
+    // TODO listener
+    const token = localStorage.getItem('privy:token')
+    console.log('query privy token', token)
+    if (token) {
+      chrome.runtime.sendMessage({ action: 'login', token }, function (response) {
+        console.log('response', response);
+      });
+    }
   }
 };

@@ -17,6 +17,10 @@ const CHAIN_INFO_BY_ID = {
     10200: {
         name: 'Gnosis Chiado',
         imageUrl: 'https://icons.llamao.fi/icons/chains/rsz_xdai.jpg'
+    },
+    84532: {
+        name: 'Base Sepolia',
+        imageUrl: 'https://chainlist.org/unknown-logo.png'
     }
 }
 
@@ -41,7 +45,7 @@ const ProfileButton = () => {
 
 export const WalletHeader = () => {
 
-    const { signer, chainId } = useWalletContext();
+    const { signer, chainId, address } = useWalletContext();
     const { name: chainName, imageUrl } = CHAIN_INFO_BY_ID[chainId()]
     return (
         <div class="text-lg pb-2">
@@ -54,9 +58,11 @@ export const WalletHeader = () => {
                 {/* <div>
                     {chainName}
                 </div> */}
-                {/* <div>
-                    {signer.address}
-                </div> */}
+                <div>
+                    {
+                        address()
+                    }
+                </div>
                 <div class="right-0 flex justify-end">
                     <ProfileButton />
                 </div>

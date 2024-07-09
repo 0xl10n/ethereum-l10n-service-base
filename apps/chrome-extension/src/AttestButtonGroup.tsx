@@ -29,6 +29,7 @@ export const AttestButtonGroup = () => {
 
     const { signer } = useWalletContext();
 
+    console.log('wallet context', signer());
     // TODO
     const attestorAddress = '0x11AFe053Cc013c4830Aa3b91EEcb84630ccEc4A8';
 
@@ -36,9 +37,13 @@ export const AttestButtonGroup = () => {
     const { activeCue } = useTranslationContext();
 
     const attest = (cue: VTTCue, score: number, id: number) => {
-
+        console.log('attest', signer())
+        if (!signer()) {
+            console.log('signer missing')
+            return;
+        }
         const attestor = new Attestor(
-            signer,
+            signer(),
             TRANSLATION_ATTESTATION_SCHEMA,
             SCHEMA_REGISTRY_CONTRACT_ADDRESS, EAS_CONTRACT_ADDRESS, attestorAddress,
             TRANSLATION_SCHEMA_UID
@@ -81,7 +86,7 @@ export const AttestButtonGroup = () => {
         <div class="text-xl" >
             <div class="flex flex-col">
                 <div class="flex flex-row content-center items-center pr-3">
-                    Translation Id: &nbsp;
+                    Translation: &nbsp;
                     <div class="badge badge-primary text-sm px-4">
                         {createTranslationStringId(sourceId, fromLocale, toLocale, activeCue().id)}
                     </div>

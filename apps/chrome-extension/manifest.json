@@ -15,7 +15,11 @@
       "runAt": "document_end"
     },
     {
-      "matches": ["https://*.attest.org/*", "https://*.0xl10n.org/*"],
+      "matches": [
+        "https://*.attest.org/*",
+        "https://*.0xl10n.org/*",
+        "http://localhost/*"
+      ],
       "js": ["site-l10n.mjs"],
       "css": ["ext.css"],
       "runAt": "document_end"

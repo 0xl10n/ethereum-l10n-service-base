@@ -3,94 +3,65 @@ import { createWalletClient, custom, http } from 'viem'
 import { mainnet } from 'viem/chains'
 // import * as LitJsSdk from "@lit-protocol/lit-node-client";
 // import { checkAndSignAuthMessage } from "@lit-protocol/lit-node-client";
-import { privateKeyToAccount } from 'viem/accounts';
 import { Wallet, ethers } from 'ethers';
+
+import { CoinbaseWalletSDK } from '@coinbase/wallet-sdk'
+import { BrowserProvider } from 'ethers';
 
 const WalletContext = createContext();
 
-const demoWalletPrivateKey = '0x3db76cdd104b07bebf2221076fab7485c03b59f5af25322497763a52b05bd94c';
-/**
- * 
- * we intentionally use a separate wallet and not the one connecting with metamask
- * For demo purpose, now a hardcoded wallet is used
- * in future we will delegate to lit action to sign for EAS Lit.Actions.signEcdsa
- */
 
-const loadSession = () => {
-    // chrome.storage.sync.get({ 'foo': 'hello', 'bar': 'hi' }, function () {
-    //     console.log('Settings saved');
-    // });
-}
-
-
+const coinbaseSdk = new CoinbaseWalletSDK({
+    appName: 'Ethereum Localization Service',
+    appChainIds: [
+        84532
+    ]
+});
 
 
 export const WalletContextProvider = (props) => {
-    const [chainId, setChainId] = createSignal(11155111)
-
-    // 42161 arbitrum
-    // 421614 arbitrum sepolia
-    // 10200 gnosis chiado Testnet
-
-    const provider = ethers.getDefaultProvider(11155111)
-    const signer = new Wallet(demoWalletPrivateKey, provider)
-    const account = privateKeyToAccount(demoWalletPrivateKey);
-
-    const client = createWalletClient({
-        chain: mainnet,
-        transport: http(),
-        account
-    })
+    const [chainId, setChainId] = createSignal(84532)
+    const [signer, setSigner] = createSignal(null)
+    const [address, setAddress] = createSignal(null);
 
 
-    createEffect(async () => {
-        const { chainId } = await provider.getNetwork()
-        setChainId(Number(chainId))
-    })
 
 
-    // get auth update from RuntimeContext
+
+    // chain at coinbase overriding
+    // https://github.com/coinbase/coinbase-wallet-sdk/issues/486
 
 
-    // storage for auth
-    // Save it using the Chrome extension storage API.
-    // chrome.storage.sync.set({ 'foo': 'hello', 'bar': 'hi' }, function () {
-    //     console.log('Settings saved');
-    // });
+    const cbProvider = coinbaseSdk.makeWeb3Provider({ options: 'smartWalletOnly' });
 
 
+    const provider = new ethers.BrowserProvider(cbProvider);
 
 
     createEffect(async () => {
-        // const litNodeClient = new LitJsSdk.LitNodeClient({
-        //     litNetwork: 'manzano',
-        // });
 
-        // console.log('connect')
-        // await litNodeClient.connect();
+        console.log('setup')
+        const loadSigner = await provider.getSigner();
+        setSigner(loadSigner);
+        // // Use provider
+        const addresses = await cbProvider.request({ method: 'eth_requestAccounts' });
 
-        // let nonce = await litNodeClient.getLatestBlockhash();
+        console.log('coinbase addresses', addresses)
 
-        // const authSig = await checkAndSignAuthMessage({
-        //     chain: "ethereum",
-        //     nonce
-        // });
+        setAddress(addresses?.[0])
 
-        // const contractClient = new LitContracts({
-        //     signer: wallet,
-        //     network: 'habanero',
-        // });
+        // TODO show error on wrong network 
+        // which happens if coinbase got cached
 
-        // await contractClient.connect();
     })
 
-
-    // const [address] = await client.getAddresses()
 
     return <WalletContext.Provider
         value={{
-            signer,
-            chainId
+            signer: signer,
+            chainId,
+            address
+
             // client
         }}
     >{props.children}</WalletContext.Provider>
